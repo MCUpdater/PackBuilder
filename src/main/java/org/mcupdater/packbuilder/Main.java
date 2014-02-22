@@ -29,7 +29,8 @@ public class Main extends Application
 
 		stage.setTitle("MCUpdater PackBuilder " + Version.VERSION);
 		stage.setScene(scene);
-		stage.getIcons().add(new Image(Main.class.getResourceAsStream("mcu-icon.png")));
+		stage.getIcons().add(new Image(getClass().getResourceAsStream("mcu-icon.png")));
+
 		stage.show();
 	}
 }

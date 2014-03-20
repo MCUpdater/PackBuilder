@@ -8,7 +8,7 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
-import org.mcupdater.Version;
+import org.mcupdater.api.Version;
 import org.mcupdater.util.MCUpdater;
 
 public class Main extends Application

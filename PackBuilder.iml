@@ -15,6 +15,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="MCU-API" exported="" />
-    <orderEntry type="library" exported="" name="Gradle: net.sf.jopt-simple:jopt-simple:4.6" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: jopt-simple-4.6" level="project" />
   </component>
 </module>
+

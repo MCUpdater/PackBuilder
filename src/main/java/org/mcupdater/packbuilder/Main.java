@@ -27,6 +27,7 @@ public class Main {
 		final MCUpdater mcu = MCUpdater.getInstance(basePath);
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
+
 				try {
 					for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
 						System.out.println("Installed L&F: " + info.getName());

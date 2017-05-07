@@ -1,16 +1,22 @@
 package org.mcupdater.packbuilder.gui;
 
+import org.jdesktop.swingx.JXTable;
 import org.mcupdater.api.Version;
 import org.mcupdater.model.*;
 import org.mcupdater.util.ServerPackParser;
+import sun.nio.cs.ext.JIS_X_0201;
 
+import java.util.HashMap;
 import java.util.List;
 import javax.swing.*;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.util.Map;
 
 public class MainForm {
 
@@ -70,6 +76,8 @@ public class MainForm {
 	}
 
 	private class TestInternal extends JInternalFrame {
+		JPanel detailPanel = new JPanel();
+
 		public TestInternal() {
 			super("Test Window",true,true,true,true);
 			setSize(600,300);
@@ -79,7 +87,7 @@ public class MainForm {
 			DefaultMutableTreeNode top;
 			top = new DefaultMutableTreeNode("/");
 			{
-				List<RawServer> pack = ServerPackParser.loadFromURL("https://files.mcupdater.com/official_packs/MCU-Prime/ServerPack.xml");
+				List<RawServer> pack = ServerPackParser.loadFromURL("https://files.mcupdater.com/optional/ServerPack.xml");
 				if (pack != null) {
 					for (RawServer server : pack) {
 						DefaultMutableTreeNode serverNode = new DefaultMutableTreeNode(server);
@@ -133,8 +141,71 @@ public class MainForm {
 			JTree tree = new JTree(top);
 			tree.addTreeSelectionListener(e -> {
 				Object userObject = ((DefaultMutableTreeNode) tree.getLastSelectedPathComponent()).getUserObject();
-				if (userObject instanceof Module) {
-					System.out.println(((Module) userObject).getId());
+				if (userObject instanceof GenericModule) {
+					GenericModule selected = (GenericModule) userObject;
+					System.out.println(selected.getId());
+					detailPanel.removeAll();
+					GroupLayout layout = new GroupLayout(detailPanel);
+					detailPanel.setLayout(layout);
+					GroupLayout.Group colLabel = layout.createParallelGroup(GroupLayout.Alignment.LEADING);
+					GroupLayout.Group colContent = layout.createParallelGroup(GroupLayout.Alignment.LEADING);
+
+					GroupLayout.Group rowID = layout.createParallelGroup(GroupLayout.Alignment.BASELINE);
+					JLabel lblID = new JLabel("ID:");
+					JTextField txtID = new JTextField(selected.getId());
+					colLabel.addComponent(lblID);
+					colContent.addComponent(txtID);
+					rowID.addComponent(lblID).addComponent(txtID);
+
+					GroupLayout.Group rowName = layout.createParallelGroup(GroupLayout.Alignment.BASELINE);
+					JLabel lblName = new JLabel("Name:");
+					JTextField txtName = new JTextField(selected.getName());
+					colLabel.addComponent(lblName);
+					colContent.addComponent(txtName);
+					rowName.addComponent(lblName).addComponent(txtName);
+
+					GroupLayout.Group rowMD5 = layout.createParallelGroup(GroupLayout.Alignment.BASELINE);
+					JLabel lblMD5 = new JLabel("MD5:");
+					JTextField txtMD5 = new JTextField(selected.getMD5());
+					colLabel.addComponent(lblMD5);
+					colContent.addComponent(txtMD5);
+					rowMD5.addComponent(lblMD5).addComponent(txtMD5);
+
+					GroupLayout.Group rowDepends = layout.createParallelGroup(GroupLayout.Alignment.BASELINE);
+					JLabel lblDepends = new JLabel("Depends:");
+					JTextField txtDepends = new JTextField(selected.getDepends());
+					colLabel.addComponent(lblDepends);
+					colContent.addComponent(txtDepends);
+					rowDepends.addComponent(lblDepends).addComponent(txtDepends);
+
+					GroupLayout.Group rowModType = layout.createParallelGroup(GroupLayout.Alignment.BASELINE);
+					JLabel lblModType = new JLabel("ModType:");
+					JTextField txtModType = new JTextField(selected.getModType().toString());
+					colLabel.addComponent(lblModType);
+					colContent.addComponent(txtModType);
+					rowModType.addComponent(lblModType).addComponent(txtModType);
+
+					GroupLayout.Group rowFilename = layout.createParallelGroup(GroupLayout.Alignment.BASELINE);
+					JLabel lblFilename = new JLabel("Filename:");
+					JTextField txtFilename = new JTextField(selected.getFilename());
+					colLabel.addComponent(lblFilename);
+					colContent.addComponent(txtFilename);
+					rowFilename.addComponent(lblFilename).addComponent(txtFilename);
+
+					GroupLayout.Group rowMeta = layout.createParallelGroup(GroupLayout.Alignment.BASELINE);
+					JLabel lblMeta = new JLabel("Meta:");
+					JXTable tblMeta = new JXTable(toTableModel(selected.getMeta()));
+
+					colLabel.addComponent(lblMeta);
+					colContent.addComponent(tblMeta);
+					rowMeta.addComponent(lblMeta).addComponent(tblMeta);
+
+					layout.setAutoCreateContainerGaps(true);
+					layout.setAutoCreateGaps(true);
+					layout.setHorizontalGroup(layout.createSequentialGroup().addGroup(colLabel).addGroup(colContent));
+					layout.setVerticalGroup(layout.createSequentialGroup().addGroup(rowID).addGroup(rowName).addGroup(rowMD5).addGroup(rowDepends).addGroup(rowModType).addGroup(rowFilename).addGroup(rowMeta));
+					detailPanel.revalidate();
+					detailPanel.repaint();
 				} else {
 					System.out.println(userObject.getClass());
 				}
@@ -145,8 +216,17 @@ public class MainForm {
 			x.fill = GridBagConstraints.BOTH;
 			x.weightx = 1;
 			x.weighty = 1;
-			JPanel panel = new JPanel();
-			this.add(panel, x);
+			this.add(new JScrollPane(detailPanel), x);
 		}
+	}
+
+	private TableModel toTableModel(Map<String, String> nvpairs) {
+		DefaultTableModel model = new DefaultTableModel(
+				new Object[] { "Key", "Value" }, 0
+		);
+		for (Map.Entry<?,?> entry : nvpairs.entrySet()) {
+			model.addRow(new Object[] { entry.getKey(), entry.getValue() });
+		}
+		return model;
 	}
 }

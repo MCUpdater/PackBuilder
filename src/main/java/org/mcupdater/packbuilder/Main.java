@@ -1,5 +1,6 @@
 package org.mcupdater.packbuilder;
 
+import javafx.application.Application;
 import org.mcupdater.packbuilder.gui.MainForm;
 import org.mcupdater.packbuilder.gui.TextContextMenu;
 import org.mcupdater.util.MCUpdater;
@@ -25,6 +26,8 @@ public class Main {
 			basePath = new File(new File(System.getProperty("user.home")),".MCUpdater");
 		}
 		final MCUpdater mcu = MCUpdater.getInstance(basePath);
+		Application.launch(MainForm.class, args);
+		/*
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 
@@ -65,5 +68,6 @@ public class Main {
 				}
 			}
 		});
+		*/
 	}
 }

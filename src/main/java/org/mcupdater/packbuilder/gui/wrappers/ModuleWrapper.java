@@ -198,7 +198,7 @@ public class ModuleWrapper extends ModifiableElement {
 	public void saveUpdates() {
 		super.saveUpdates();
 		element.setName(fieldName.getText());
-		element.setId(fieldName.getText());
+		element.setId(fieldId.getText());
 		element.setDepends(fieldDepends.getText());
 		element.setSide(fieldSide.getValue());
 		element.setUrls(fieldUrls.getItems());

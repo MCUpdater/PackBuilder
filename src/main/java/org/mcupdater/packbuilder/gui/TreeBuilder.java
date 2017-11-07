@@ -8,14 +8,14 @@ import java.util.List;
 
 public class TreeBuilder {
 
-	public static TreeItem<Object> loadFromUrl(String sourceUrl){
-		TreeItem<Object> root = new TreeItem<>(ServerPackParser.loadFromURL(sourceUrl));
+	public static TreeItem<IPackElement> loadFromUrl(String sourceUrl){
+		TreeItem<IPackElement> root = new TreeItem<>(ServerPackParser.loadFromURL(sourceUrl));
 		if (root.getValue() != null) {
 			ServerPack pack = (ServerPack) root.getValue();
 			for (RawServer server : pack.getServers()) {
-				TreeItem<Object> serverNode = new TreeItem<>(server);
+				TreeItem<IPackElement> serverNode = new TreeItem<>(server);
 				for (IPackElement packElement : server.getPackElements()) {
-					TreeItem<Object> newNode = new TreeItem<>(packElement);
+					TreeItem<IPackElement> newNode = new TreeItem<>(packElement);
 					serverNode.getChildren().add(newNode);
 					if (packElement instanceof Module) {
 						if (((Module) packElement).hasSubmodules()) {

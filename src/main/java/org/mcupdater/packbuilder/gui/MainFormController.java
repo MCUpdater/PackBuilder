@@ -123,7 +123,11 @@ public class MainFormController {
 
 			Label tbServer = new Label("Server:");
 			Button tbNewServer = new Button("", loadResource("server_add.png"));
-			tbNewServer.setOnAction(event -> {});
+			tbNewServer.setOnAction(event -> {
+				RawServer newServer = new RawServer();
+				((ServerPack) top[0].getValue()).getServers().add(newServer);
+				top[0].getChildren().add(new TreeItem<>(newServer));
+			});
 			Button tbFastServer = new Button("", loadResource("server_lightning.png"));
 			tbFastServer.setOnAction(event -> {});
 			serverGroup = new HBox(tbServer, tbNewServer, tbFastServer);

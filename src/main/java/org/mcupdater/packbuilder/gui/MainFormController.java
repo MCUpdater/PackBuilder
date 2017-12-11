@@ -129,17 +129,61 @@ public class MainFormController {
 				top[0].getChildren().add(new TreeItem<>(newServer));
 			});
 			Button tbFastServer = new Button("", loadResource("server_lightning.png"));
-			tbFastServer.setOnAction(event -> {});
+			tbFastServer.setOnAction(event -> {
+				//TODO: Implement FastPack here
+			});
 			serverGroup = new HBox(tbServer, tbNewServer, tbFastServer);
 
 			Label tbImport = new Label( "Import:");
 			Button tbNewImport = new Button("", loadResource("link_add.png"));
-			tbNewImport.setOnAction(event -> {});
+			tbNewImport.setOnAction(event -> {
+				Import newImport = new Import();
+				TreeItem<IPackElement> currentItem = tree.getSelectionModel().getSelectedItem();
+				TreeItem<IPackElement> server;
+				switch (currentItem.getValue().getClass().toString()) {
+					case "class org.mcupdater.model.RawServer":
+						server = currentItem;
+						break;
+					case "class org.mcupdater.model.Import":
+					case "class org.mcupdater.model.Module":
+						server = currentItem.getParent();
+						break;
+					case "class org.mcupdater.model.Submodule":
+					case "class org.mcupdater.model.ConfigFile":
+						server = currentItem.getParent().getParent();
+						break;
+					default:
+						server = null;
+				}
+				((RawServer) server.getValue()).getPackElements().add(newImport);
+				server.getChildren().add(new TreeItem<>(newImport));
+			});
 			importGroup = new HBox(tbImport,tbNewImport);
 
 			Label tbMod = new Label("Mod:");
 			Button tbNewMod = new Button("", loadResource("package_add.png"));
-			tbNewMod.setOnAction(event -> {});
+			tbNewMod.setOnAction(event -> {
+				Module newModule = Module.createBlankModule();
+				TreeItem<IPackElement> currentItem = tree.getSelectionModel().getSelectedItem();
+				TreeItem<IPackElement> server;
+				switch (currentItem.getValue().getClass().toString()) {
+					case "class org.mcupdater.model.RawServer":
+						server = currentItem;
+						break;
+					case "class org.mcupdater.model.Import":
+					case "class org.mcupdater.model.Module":
+						server = currentItem.getParent();
+						break;
+					case "class org.mcupdater.model.Submodule":
+					case "class org.mcupdater.model.ConfigFile":
+						server = currentItem.getParent().getParent();
+						break;
+					default:
+						server = null;
+				}
+				((RawServer) server.getValue()).getPackElements().add(newModule);
+				server.getChildren().add(new TreeItem<>(newModule));
+			});
 			Button tbCurseMod = new Button("", loadResource("package_go.png"));
 			tbCurseMod.setOnAction(event -> {});
 			Button tbLinkMod = new Button("", loadResource("package_link.png"));
@@ -148,7 +192,24 @@ public class MainFormController {
 
 			Label tbSubmod = new Label("Submod:");
 			Button tbNewSubmod = new Button("", loadResource("plugin_add.png"));
-			tbNewSubmod.setOnAction(event -> {});
+			tbNewSubmod.setOnAction(event -> {
+				Submodule newModule = Submodule.createBlankSubmodule();
+				TreeItem<IPackElement> currentItem = tree.getSelectionModel().getSelectedItem();
+				TreeItem<IPackElement> module;
+				switch (currentItem.getValue().getClass().toString()) {
+					case "class org.mcupdater.model.Module":
+						module = currentItem;
+						break;
+					case "class org.mcupdater.model.Submodule":
+					case "class org.mcupdater.model.ConfigFile":
+						module = currentItem.getParent();
+						break;
+					default:
+						module = null;
+				}
+				((Module) module.getValue()).getSubmodules().add(newModule);
+				module.getChildren().add(new TreeItem<>(newModule));
+			});
 			Button tbCurseSubmod = new Button("", loadResource("plugin_go.png"));
 			tbCurseSubmod.setOnAction(event -> {});
 			Button tbLinkSubmod = new Button("", loadResource("plugin_link.png"));
@@ -157,7 +218,24 @@ public class MainFormController {
 
 			Label tbConfig = new Label("Config:");
 			Button tbNewConfig = new Button("", loadResource("page_white_add.png"));
-			tbNewConfig.setOnAction(event -> {});
+			tbNewConfig.setOnAction(event -> {
+				ConfigFile newConfigFile = new ConfigFile(new ArrayList<>(),"",false,"");
+				TreeItem<IPackElement> currentItem = tree.getSelectionModel().getSelectedItem();
+				TreeItem<IPackElement> module;
+				switch (currentItem.getValue().getClass().toString()) {
+					case "class org.mcupdater.model.Module":
+						module = currentItem;
+						break;
+					case "class org.mcupdater.model.Submodule":
+					case "class org.mcupdater.model.ConfigFile":
+						module = currentItem.getParent();
+						break;
+					default:
+						module = null;
+				}
+				((Module) module.getValue()).getConfigs().add(newConfigFile);
+				module.getChildren().add(new TreeItem<>(newConfigFile));
+			});
 			Button tbLinkConfig = new Button("", loadResource("page_white_link.png"));
 			tbLinkConfig.setOnAction(event -> {});
 			configGroup = new HBox(tbConfig, tbNewConfig,tbLinkConfig);

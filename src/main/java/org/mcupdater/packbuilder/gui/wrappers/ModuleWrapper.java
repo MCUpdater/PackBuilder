@@ -89,7 +89,7 @@ public class ModuleWrapper extends ModifiableElement {
 		gui.addRow(row++, new Label("Mod Type:"), fieldModType);
 		gui.addRow(row++, new Label("   (Extract) In Root:"), fieldInRoot);
 		gui.addRow(row++, new Label("   Order:"), fieldOrder);
-		gui.addRow(row++, new Label("   Keep META-INF:"), fieldKeepMeta);
+		gui.addRow(row++, new Label("   (Jar) Keep META-INF:"), fieldKeepMeta);
 		gui.addRow(row++, new Label("   Special Launch Args:", loadResource("../stop.png")), fieldLaunchArgs);
 		gui.addRow(row++, new Label("   Special Java Args:", loadResource("../stop.png")), fieldJreArgs);
 		gui.addRow(row++, new Label("MD5:"), fieldMD5);

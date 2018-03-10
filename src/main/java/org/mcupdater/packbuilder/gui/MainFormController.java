@@ -1,19 +1,29 @@
 package org.mcupdater.packbuilder.gui;
 
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
+import javafx.stage.DirectoryChooser;
+import javafx.stage.Stage;
+import javafx.stage.Window;
 import org.mcupdater.api.Version;
 import org.mcupdater.model.*;
+import org.mcupdater.mojang.VersionManifest;
 import org.mcupdater.packbuilder.gui.wrappers.*;
+import org.mcupdater.util.FastPack;
 import org.mcupdater.util.ServerDefinition;
 import org.mcupdater.util.ServerPackParser;
 import org.w3c.dom.Document;
@@ -22,13 +32,11 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class MainFormController {
 	@FXML public Menu mnuFile;
@@ -130,7 +138,10 @@ public class MainFormController {
 			});
 			Button tbFastServer = new Button("", loadResource("server_lightning.png"));
 			tbFastServer.setOnAction(event -> {
-				//TODO: Implement FastPack here
+				RawServer newServer = promptForFastPack(tree.getScene().getWindow());
+				if(newServer != null) {
+					top[0].getChildren().add(TreeBuilder.fromRawServer(newServer));
+				}
 			});
 			serverGroup = new HBox(tbServer, tbNewServer, tbFastServer);
 
@@ -185,9 +196,13 @@ public class MainFormController {
 				server.getChildren().add(new TreeItem<>(newModule));
 			});
 			Button tbCurseMod = new Button("", loadResource("package_go.png"));
-			tbCurseMod.setOnAction(event -> {});
+			tbCurseMod.setOnAction(event -> {
+				//TODO: Curse Feed Link
+			});
 			Button tbLinkMod = new Button("", loadResource("package_link.png"));
-			tbLinkMod.setOnAction(event -> {});
+			tbLinkMod.setOnAction(event -> {
+				//TODO: Download Link
+			});
 			moduleGroup = new HBox(tbMod, tbNewMod,tbCurseMod,tbLinkMod);
 
 			Label tbSubmod = new Label("Submod:");
@@ -211,9 +226,13 @@ public class MainFormController {
 				module.getChildren().add(new TreeItem<>(newModule));
 			});
 			Button tbCurseSubmod = new Button("", loadResource("plugin_go.png"));
-			tbCurseSubmod.setOnAction(event -> {});
+			tbCurseSubmod.setOnAction(event -> {
+				//TODO: Curse Feed Link
+			});
 			Button tbLinkSubmod = new Button("", loadResource("plugin_link.png"));
-			tbLinkSubmod.setOnAction(event -> {});
+			tbLinkSubmod.setOnAction(event -> {
+				//TODO: Download Link
+			});
 			submoduleGroup = new HBox(tbSubmod, tbNewSubmod,tbCurseSubmod,tbLinkSubmod);
 
 			Label tbConfig = new Label("Config:");
@@ -237,7 +256,9 @@ public class MainFormController {
 				module.getChildren().add(new TreeItem<>(newConfigFile));
 			});
 			Button tbLinkConfig = new Button("", loadResource("page_white_link.png"));
-			tbLinkConfig.setOnAction(event -> {});
+			tbLinkConfig.setOnAction(event -> {
+				//TODO: Download Link
+			});
 			configGroup = new HBox(tbConfig, tbNewConfig,tbLinkConfig);
 			serverGroup.setVisible(false);
 			importGroup.setVisible(false);
@@ -253,6 +274,103 @@ public class MainFormController {
 		BorderPane content = new BorderPane(detailWrapper,toolBar,null,null, tree);
 		Tab newTab = new Tab(text,content);
 		tabContent.getTabs().add(newTab);
+	}
+
+	private RawServer promptForFastPack(Window parent) {
+		DirectoryChooser chooser = new DirectoryChooser();
+		chooser.setTitle("FastPack: Select path to scan");
+		chooser.setInitialDirectory(new File(System.getProperty("user.home")));
+		File source = chooser.showDialog(parent);
+		if (source != null) {
+			String baseUrl;
+			{
+				TextInputDialog prompt = new TextInputDialog();
+				prompt.setTitle("Base URL");
+				prompt.setHeaderText("Enter the Base URL for your ServerPack's downloads:");
+				prompt.setContentText("URL:");
+
+				Optional<String> result = prompt.showAndWait();
+				if (result.isPresent()) {
+					baseUrl = result.get();
+				} else {
+					return null;
+				}
+			}
+			String mcVersion = "";
+			{
+				try {
+					VersionManifest versions = VersionManifest.getCurrent(false);
+					ChoiceDialog<VersionManifest.VersionInfo> versionPrompt = new ChoiceDialog<>(versions.getVersion(versions.getLatest().getRelease()), versions.getVersions());
+					versionPrompt.setTitle("Minecraft version");
+					versionPrompt.setHeaderText("Select the version of Minecraft that this ServerPack will target:");
+
+					Optional<VersionManifest.VersionInfo> versionResult = versionPrompt.showAndWait();
+					if (versionResult.isPresent()) {
+						mcVersion = versionResult.get().getId();
+					} else {
+						return null;
+					}
+
+				} catch (IOException e) {
+					e.printStackTrace();
+					return null;
+				} catch (VersionManifest.VersionNotFoundException e) {
+					e.printStackTrace();
+				}
+			}
+			String forgeVersion = "";
+			{
+				TextInputDialog forgePrompt = new TextInputDialog();
+				forgePrompt.setTitle("Minecraft Forge version");
+				forgePrompt.setHeaderText("Enter the Minecraft Forge version to be included (leave blank to not include Forge):");
+				forgePrompt.setContentText("Version:");
+				Optional<String> result = forgePrompt.showAndWait();
+				if (result.isPresent() && !result.get().isEmpty()) {
+					forgeVersion = result.get();
+				}
+			}
+			ServerDefinition fastpack = FastPack.doFastPack("","","FastPack","fastpack","","net.minecraft.launchwrapper.Launch","about:blank","","1",false, mcVersion, source.toPath(), baseUrl,false);
+			if (fastpack.hasLitemods && !fastpack.hasMod(fastpack.sortMods(), "liteloader")) {
+				fastpack.addModule(new Module("LiteLoader", "liteloader", Arrays.asList(new PrioritizedURL("http://dl.liteloader.com/versions/com/mumfrey/liteloader/" + mcVersion + "/liteloader-" + mcVersion + ".jar", 0)), null, "", false, ModType.Library, 100, false, false, true, "", null, "CLIENT", "", null, "--tweakClass com.mumfrey.liteloader.launch.LiteLoaderTweaker", "", null, ""));
+			}
+			if (!forgeVersion.isEmpty()) {
+				fastpack.addForge(mcVersion, forgeVersion);
+			}
+			List<Module> sortedModules = fastpack.sortMods();
+			Map<String,String> issues = new HashMap<>();
+			fastpack.assignConfigs(issues, false);
+			if(issues.size() > 0) {
+				Alert alert = new Alert(Alert.AlertType.WARNING);
+				alert.setTitle("Config matching may not be accurate");
+				alert.setHeaderText("The following config files may not have assigned to the correct mods:");
+				TableColumn<Map.Entry<String, String>, String> column1 = new TableColumn<>("Path");
+				column1.setCellValueFactory(p -> new SimpleStringProperty(p.getValue().getKey()));
+				column1.setCellFactory(TextFieldTableCell.forTableColumn());
+
+				TableColumn<Map.Entry<String, String>, String> column2 = new TableColumn<>("Module");
+				column2.setCellValueFactory(p -> new SimpleStringProperty(p.getValue().getValue()));
+				column2.setCellFactory(TextFieldTableCell.forTableColumn());
+
+				ObservableList<Map.Entry<String,String>> data = FXCollections.observableArrayList(issues.entrySet());
+				final TableView<Map.Entry<String,String>> table = new TableView<>(FXCollections.observableArrayList(data));
+				table.setFixedCellSize(25);
+				table.prefHeightProperty().bind(table.fixedCellSizeProperty().multiply(Bindings.size(table.getItems()).add(2.01)));
+				table.setEditable(false);
+				table.getColumns().addAll(column1, column2);
+
+				table.setMaxWidth(Double.MAX_VALUE);
+				table.setMaxHeight(Double.MAX_VALUE);
+
+				alert.getDialogPane().setExpandableContent(table);
+				alert.getDialogPane().setExpanded(true);
+				alert.showAndWait();
+			}
+			RawServer newServer = new RawServer(fastpack.getServerEntry());
+			newServer.getPackElements().addAll(fastpack.getImports());
+			newServer.getPackElements().addAll(fastpack.sortMods());
+			return newServer;
+		}
+		return null;
 	}
 
 	private void confimAndDelete(TreeItem<IPackElement> selectedItem) {

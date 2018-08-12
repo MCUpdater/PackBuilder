@@ -3,19 +3,16 @@ package org.mcupdater.packbuilder.gui;
 import org.jdesktop.swingx.JXTable;
 import org.mcupdater.api.Version;
 import org.mcupdater.model.*;
+import org.mcupdater.model.Module;
 import org.mcupdater.util.ServerPackParser;
-import sun.nio.cs.ext.JIS_X_0201;
 
-import java.util.HashMap;
-import java.util.List;
 import javax.swing.*;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.util.List;
 import java.util.Map;
 
 public class MainForm {

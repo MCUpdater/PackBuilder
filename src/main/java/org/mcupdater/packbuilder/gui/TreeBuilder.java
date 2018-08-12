@@ -2,6 +2,7 @@ package org.mcupdater.packbuilder.gui;
 
 import javafx.scene.control.TreeItem;
 import org.mcupdater.model.*;
+import org.mcupdater.model.Module;
 import org.mcupdater.util.ServerPackParser;
 
 import java.util.List;

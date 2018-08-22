@@ -13,9 +13,12 @@ public class TreeBuilder {
 		TreeItem<IPackElement> root = new TreeItem<>(ServerPackParser.loadFromURL(sourceUrl, true));
 		if (root.getValue() != null) {
 			ServerPack pack = (ServerPack) root.getValue();
-			for (RawServer server : pack.getServers()) {
-				TreeItem<IPackElement> serverNode = fromRawServer(server);
-				root.getChildren().add(serverNode);
+			for (Server server : pack.getServers()) {
+				if (server instanceof RawServer) {
+					RawServer rawServer = (RawServer) server;
+					TreeItem<IPackElement> serverNode = fromRawServer(rawServer);
+					root.getChildren().add(serverNode);
+				}
 			}
 		}
 		return root;

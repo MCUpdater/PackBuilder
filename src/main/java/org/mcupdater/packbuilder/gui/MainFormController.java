@@ -479,28 +479,25 @@ public class MainFormController {
 	}
 
 	public void testGenerateXML(ActionEvent actionEvent) throws Exception {
-		ServerPack pack = ServerPackParser.loadFromURL("https://files.mcupdater.com/official_packs/TheSkyblockExperience/skyblock.xml");
-		Document doc = ServerPackParser.readXmlFromUrl("https://files.mcupdater.com/official_packs/TheSkyblockExperience/skyblock.xml");
-		XPath xPath = XPathFactory.newInstance().newXPath();
-		String style = (String) xPath.compile("/processing-instruction('xml-stylesheet')").evaluate(doc, XPathConstants.STRING);
-		int start = style.indexOf("href=\"");
-		String href = style.substring(start+6, style.indexOf("\"",start+6));
+		ServerPack pack = ServerPackParser.loadFromURL("https://files.mcupdater.com/official_packs/TheSkyblockExperience/skyblock.xml", true);
 		BorderPane content = new BorderPane();
 		TextArea xml = new TextArea();
 		StringWriter stringWriter = new StringWriter();
 		BufferedWriter writer = new BufferedWriter(stringWriter);
 		try {
-			ServerDefinition.generateServerPackHeaderXML(href, writer);
-			for (RawServer server : pack.getServers()) {
-				ServerDefinition.generateServerHeaderXML(server, writer);
-				List<Import> imports = new ArrayList<>();
-				List<Module> modules = new ArrayList<>();
-				for (IPackElement element : server.getPackElements()) {
-					if (element instanceof Import) imports.add((Import) element);
-					if (element instanceof Module) modules.add((Module) element);
+			ServerDefinition.generateServerPackHeaderXML(pack.getXsltPath(), writer);
+			for (Server server : pack.getServers()) {
+				if (server instanceof RawServer) {
+					ServerDefinition.generateServerHeaderXML(server, writer);
+					List<Import> imports = new ArrayList<>();
+					List<Module> modules = new ArrayList<>();
+					for (IPackElement element : ((RawServer) server).getPackElements()) {
+						if (element instanceof Import) imports.add((Import) element);
+						if (element instanceof Module) modules.add((Module) element);
+					}
+					ServerDefinition.generateServerDetailXML(writer, imports, modules, false);
+					ServerDefinition.generateServerFooterXML(writer);
 				}
-				ServerDefinition.generateServerDetailXML(writer, imports, modules, false );
-				ServerDefinition.generateServerFooterXML(writer);
 			}
 			ServerDefinition.generateServerPackFooterXML(writer);
 			writer.flush();

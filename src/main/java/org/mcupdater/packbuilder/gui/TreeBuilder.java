@@ -9,7 +9,7 @@ import java.util.List;
 public class TreeBuilder {
 
 	public static TreeItem<IPackElement> loadFromUrl(String sourceUrl){
-		TreeItem<IPackElement> root = new TreeItem<>(ServerPackParser.loadFromURL(sourceUrl));
+		TreeItem<IPackElement> root = new TreeItem<>(ServerPackParser.loadFromURL(sourceUrl, true));
 		if (root.getValue() != null) {
 			ServerPack pack = (ServerPack) root.getValue();
 			for (RawServer server : pack.getServers()) {

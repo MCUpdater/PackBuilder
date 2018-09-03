@@ -17,7 +17,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.stage.DirectoryChooser;
-import javafx.stage.Stage;
 import javafx.stage.Window;
 import org.mcupdater.api.Version;
 import org.mcupdater.model.*;
@@ -27,11 +26,7 @@ import org.mcupdater.packbuilder.gui.wrappers.*;
 import org.mcupdater.util.FastPack;
 import org.mcupdater.util.ServerDefinition;
 import org.mcupdater.util.ServerPackParser;
-import org.w3c.dom.Document;
 
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathFactory;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
@@ -44,13 +39,14 @@ public class MainFormController {
 	@FXML public TabPane tabContent;
 	@FXML public MenuItem mnuFileNew;
 	@FXML public MenuItem mnuFileOpen;
-	@FXML public Menu mnuFileRecent;
+//	@FXML public Menu mnuFileRecent;
 	@FXML public MenuItem mnuFileClose;
 	@FXML public MenuItem mnuFileSave;
 	@FXML public MenuItem mnuFileSaveAs;
 	@FXML public MenuItem mnuFileRevert;
-	@FXML public MenuItem mnuFilePref;
+//	@FXML public MenuItem mnuFilePref;
 	@FXML public MenuItem mnuFileQuit;
+/*
 	@FXML public Menu mnuEdit;
 	@FXML public MenuItem mnuEditUndo;
 	@FXML public MenuItem mnuEditRedo;
@@ -60,6 +56,7 @@ public class MainFormController {
 	@FXML public MenuItem mnuEditDelete;
 	@FXML public MenuItem mnuEditSelectAll;
 	@FXML public MenuItem mnuEditUnselectAll;
+*/
 	@FXML public MenuItem mnuHelpAbout;
 	@FXML public Button btnA;
 	@FXML public Button btnB;
@@ -85,23 +82,6 @@ public class MainFormController {
 
 	}
 
-	public void realTab(ActionEvent actionEvent) {
-		TextInputDialog prompt = new TextInputDialog("https://files.mcupdater.com/official_packs/TheSkyblockExperience/skyblock.xml");
-		prompt.setTitle("Load ServerPack");
-		prompt.setHeaderText("Enter the URL for your ServerPack XML:");
-		prompt.setContentText("URL:");
-
-		Optional<String> result = prompt.showAndWait();
-		final TreeItem[] top = new TreeItem[1];
-		final ModifiableElement[] detailElement = new ModifiableElement[1];
-		final String[] title = new String[1];
-		result.ifPresent(url -> {
-					top[0] = TreeBuilder.loadFromUrl(url);
-					title[0] = url;
-					createTab(top, detailElement, title[0]);
-				});
-	}
-
 	public void createTab(TreeItem<IPackElement>[] top, ModifiableElement[] detailElement, String text) {
 		BorderPane detailWrapper = new BorderPane();
 		GridPane detailPanel = new GridPane();
@@ -123,7 +103,7 @@ public class MainFormController {
 			});
 			tbExport = new Button( "Export", loadResource("page_code.png"));
 			tbExport.setOnAction(event -> {
-				generateXML(top[0]);
+				generateXMLPreview(top[0]);
 			});
 			Button tbDelete = new Button("Delete", loadResource("bin.png"));
 			tbDelete.setOnAction(event -> {
@@ -432,11 +412,19 @@ public class MainFormController {
 		detailWrapper.setTop(toolBarInner);
 	}
 
-	private void generateXML(TreeItem<IPackElement> top) {
+	private void generateXMLPreview(TreeItem<IPackElement> top) {
 		BorderPane content = new BorderPane();
 		TextArea xml = new TextArea();
 		StringWriter stringWriter = new StringWriter();
 		BufferedWriter writer = new BufferedWriter(stringWriter);
+		writeXML(top, writer);
+		xml.setText(stringWriter.toString());
+		content.setCenter(xml);
+		Tab newTab = new Tab("Export", content);
+		tabContent.getTabs().add(newTab);
+	}
+
+	private void writeXML(TreeItem<IPackElement> top, BufferedWriter writer) {
 		try {
 			ServerDefinition.generateServerPackHeaderXML(((ServerPack) top.getValue()).getXsltPath(), writer);
 			for (TreeItem<IPackElement> child : top.getChildren()) {
@@ -458,10 +446,6 @@ public class MainFormController {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		xml.setText(stringWriter.toString());
-		content.setCenter(xml);
-		Tab newTab = new Tab("Export", content);
-		tabContent.getTabs().add(newTab);
 	}
 
 	private Node loadResource(String resourceName) {
@@ -476,38 +460,6 @@ public class MainFormController {
 		}
 
 		return fields;
-	}
-
-	public void testGenerateXML(ActionEvent actionEvent) throws Exception {
-		ServerPack pack = ServerPackParser.loadFromURL("https://files.mcupdater.com/official_packs/TheSkyblockExperience/skyblock.xml", true);
-		BorderPane content = new BorderPane();
-		TextArea xml = new TextArea();
-		StringWriter stringWriter = new StringWriter();
-		BufferedWriter writer = new BufferedWriter(stringWriter);
-		try {
-			ServerDefinition.generateServerPackHeaderXML(pack.getXsltPath(), writer);
-			for (Server server : pack.getServers()) {
-				if (server instanceof RawServer) {
-					ServerDefinition.generateServerHeaderXML(server, writer);
-					List<Import> imports = new ArrayList<>();
-					List<Module> modules = new ArrayList<>();
-					for (IPackElement element : ((RawServer) server).getPackElements()) {
-						if (element instanceof Import) imports.add((Import) element);
-						if (element instanceof Module) modules.add((Module) element);
-					}
-					ServerDefinition.generateServerDetailXML(writer, imports, modules, false);
-					ServerDefinition.generateServerFooterXML(writer);
-				}
-			}
-			ServerDefinition.generateServerPackFooterXML(writer);
-			writer.flush();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		xml.setText(stringWriter.toString());
-		content.setCenter(xml);
-		Tab newTab = new Tab("XML Test", content);
-		tabContent.getTabs().add(newTab);
 	}
 
 	private class TreeChangeListener implements ChangeListener<TreeItem<IPackElement>> {
@@ -556,7 +508,8 @@ public class MainFormController {
 					case "class org.mcupdater.model.Module":
 					case "class org.mcupdater.model.Submodule":
 						GenericModule module = (GenericModule) treeItem.getValue();
-						current[0] = new ModuleWrapper(module, detailPanel);
+						RawServer rawServer = (treeItem.getParent().getValue() instanceof RawServer ? (RawServer)treeItem.getParent().getValue() : (RawServer)treeItem.getParent().getParent().getValue());
+						current[0] = new ModuleWrapper(module, detailPanel, rawServer.getVersion());
 						serverGroup.setVisible(true);
 						importGroup.setVisible(true);
 						moduleGroup.setVisible(true);
@@ -582,4 +535,58 @@ public class MainFormController {
 			}
 		}
 	}
+
+	/* Below this line is test code that can be removed before release */
+	//TODO: Remove test code before release
+
+	public void realTab(ActionEvent actionEvent) {
+		TextInputDialog prompt = new TextInputDialog("https://files.mcupdater.com/official_packs/TheSkyblockExperience/skyblock.xml");
+		prompt.setTitle("Load ServerPack");
+		prompt.setHeaderText("Enter the URL for your ServerPack XML:");
+		prompt.setContentText("URL:");
+
+		Optional<String> result = prompt.showAndWait();
+		final TreeItem[] top = new TreeItem[1];
+		final ModifiableElement[] detailElement = new ModifiableElement[1];
+		final String[] title = new String[1];
+		result.ifPresent(url -> {
+			top[0] = TreeBuilder.loadFromUrl(url);
+			title[0] = url;
+			createTab(top, detailElement, title[0]);
+		});
+	}
+
+	public void testGenerateXML(ActionEvent actionEvent) throws Exception {
+		ServerPack pack = ServerPackParser.loadFromURL("https://files.mcupdater.com/official_packs/TheSkyblockExperience/skyblock.xml", true);
+		BorderPane content = new BorderPane();
+		TextArea xml = new TextArea();
+		StringWriter stringWriter = new StringWriter();
+		BufferedWriter writer = new BufferedWriter(stringWriter);
+		try {
+			ServerDefinition.generateServerPackHeaderXML(pack.getXsltPath(), writer);
+			for (Server server : pack.getServers()) {
+				if (server instanceof RawServer) {
+					ServerDefinition.generateServerHeaderXML(server, writer);
+					List<Import> imports = new ArrayList<>();
+					List<Module> modules = new ArrayList<>();
+					for (IPackElement element : ((RawServer) server).getPackElements()) {
+						if (element instanceof Import) imports.add((Import) element);
+						if (element instanceof Module) modules.add((Module) element);
+					}
+					ServerDefinition.generateServerDetailXML(writer, imports, modules, false);
+					ServerDefinition.generateServerFooterXML(writer);
+				}
+			}
+			ServerDefinition.generateServerPackFooterXML(writer);
+			writer.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		xml.setText(stringWriter.toString());
+		content.setCenter(xml);
+		Tab newTab = new Tab("XML Test", content);
+		tabContent.getTabs().add(newTab);
+	}
+
+
 }

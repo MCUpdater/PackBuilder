@@ -20,6 +20,7 @@ import java.net.URL;
 import java.util.*;
 
 public class ModuleWrapper extends ModifiableElement {
+	private final String mcVersion;
 	private TextField fieldName = new TextField();
 	private TextField fieldId = new TextField();
 	private TextField fieldDepends = new TextField();
@@ -45,9 +46,10 @@ public class ModuleWrapper extends ModifiableElement {
 	HashMap<String,String> localMeta;
 	private GenericModule element;
 
-	public ModuleWrapper(GenericModule source, GridPane grid) {
+	public ModuleWrapper(GenericModule source, GridPane grid, String mcVersion) {
 		this.element = source;
 		this.gui = grid;
+		this.mcVersion = mcVersion;
 		int row = 0;
 		fieldUrls = tableUrlListBuilder(element.getPrioritizedUrls());
 		localMeta = element.getMeta();
@@ -203,7 +205,8 @@ public class ModuleWrapper extends ModifiableElement {
 		element.setSide(fieldSide.getValue());
 		element.setUrls(fieldUrls.getItems());
 		if (!fieldCurseProject.getText().isEmpty()) {
-			element.setCurseProject(new CurseProject(fieldCurseProject.getText(),Integer.valueOf(fieldCurseFile.getText()),fieldCurseType.getValue(),fieldCurseAuto.isSelected()));
+			int curseFile = fieldCurseFile.getText().isEmpty() ? -1 : Integer.valueOf(fieldCurseFile.getText());
+			element.setCurseProject(new CurseProject(fieldCurseProject.getText(),curseFile,fieldCurseType.getValue(),fieldCurseAuto.isSelected(),this.mcVersion));
 		} else {
 			element.setCurseProject(null);
 		}

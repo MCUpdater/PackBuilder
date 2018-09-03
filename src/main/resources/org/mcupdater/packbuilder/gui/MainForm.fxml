@@ -16,20 +16,23 @@
       <menus>
         <Menu fx:id="mnuFile" mnemonicParsing="false" text="File">
           <items>
-            <MenuItem fx:id="mnuFileNew" mnemonicParsing="false" text="New" />
+            <MenuItem fx:id="mnuFileNew" mnemonicParsing="false" text="New" onAction="#createTab" />
             <MenuItem fx:id="mnuFileOpen" mnemonicParsing="false" text="Open…" />
-            <Menu fx:id="mnuFileRecent" mnemonicParsing="false" text="Open Recent" />
+            <!--<Menu fx:id="mnuFileRecent" mnemonicParsing="false" text="Open Recent" />-->
             <SeparatorMenuItem mnemonicParsing="false" />
             <MenuItem fx:id="mnuFileClose" mnemonicParsing="false" text="Close" />
             <MenuItem fx:id="mnuFileSave" mnemonicParsing="false" text="Save" />
             <MenuItem fx:id="mnuFileSaveAs" mnemonicParsing="false" text="Save As…" />
             <MenuItem fx:id="mnuFileRevert" mnemonicParsing="false" text="Revert" />
+<!--
             <SeparatorMenuItem mnemonicParsing="false" />
             <MenuItem fx:id="mnuFilePref" mnemonicParsing="false" text="Preferences…" />
+-->
             <SeparatorMenuItem mnemonicParsing="false" />
             <MenuItem fx:id="mnuFileQuit" mnemonicParsing="false" text="Quit" />
           </items>
         </Menu>
+          <!--
         <Menu fx:id="mnuEdit" mnemonicParsing="false" text="Edit">
           <items>
             <MenuItem fx:id="mnuEditUndo" mnemonicParsing="false" text="Undo" />
@@ -44,6 +47,7 @@
             <MenuItem fx:id="mnuEditUnselectAll" mnemonicParsing="false" text="Unselect All" />
           </items>
         </Menu>
+        -->
         <Menu mnemonicParsing="false" text="Help">
           <items>
             <MenuItem fx:id="mnuHelpAbout" mnemonicParsing="false" text="About PackBuilder" />

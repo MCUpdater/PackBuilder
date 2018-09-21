@@ -10,19 +10,19 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane prefHeight="592.0" prefWidth="1175.0" xmlns="http://javafx.com/javafx/8.0.131" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.mcupdater.packbuilder.gui.MainFormController">
+<BorderPane fx:id="paneTop" prefHeight="592.0" prefWidth="1175.0" xmlns="http://javafx.com/javafx/8.0.131" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.mcupdater.packbuilder.gui.MainFormController">
    <top>
     <MenuBar BorderPane.alignment="CENTER">
       <menus>
         <Menu fx:id="mnuFile" mnemonicParsing="false" text="File">
           <items>
             <MenuItem fx:id="mnuFileNew" mnemonicParsing="false" text="New" onAction="#createTab" />
-            <MenuItem fx:id="mnuFileOpen" mnemonicParsing="false" text="Open…" />
+            <MenuItem fx:id="mnuFileOpen" mnemonicParsing="false" text="Open…" onAction="#doOpen"/>
             <!--<Menu fx:id="mnuFileRecent" mnemonicParsing="false" text="Open Recent" />-->
             <SeparatorMenuItem mnemonicParsing="false" />
             <MenuItem fx:id="mnuFileClose" mnemonicParsing="false" text="Close" />
-            <MenuItem fx:id="mnuFileSave" mnemonicParsing="false" text="Save" />
-            <MenuItem fx:id="mnuFileSaveAs" mnemonicParsing="false" text="Save As…" />
+            <MenuItem fx:id="mnuFileSave" mnemonicParsing="false" text="Save" onAction="#doSave"/>
+            <MenuItem fx:id="mnuFileSaveAs" mnemonicParsing="false" text="Save As…" onAction="#doSaveAs"/>
             <MenuItem fx:id="mnuFileRevert" mnemonicParsing="false" text="Revert" />
 <!--
             <SeparatorMenuItem mnemonicParsing="false" />

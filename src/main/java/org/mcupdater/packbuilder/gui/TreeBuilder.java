@@ -1,11 +1,10 @@
 package org.mcupdater.packbuilder.gui;
 
 import javafx.scene.control.TreeItem;
+import org.mcupdater.api.Version;
 import org.mcupdater.model.*;
 import org.mcupdater.model.Module;
 import org.mcupdater.util.ServerPackParser;
-
-import java.util.List;
 
 public class TreeBuilder {
 
@@ -16,7 +15,7 @@ public class TreeBuilder {
 			for (Server server : pack.getServers()) {
 				if (server instanceof RawServer) {
 					RawServer rawServer = (RawServer) server;
-					TreeItem<IPackElement> serverNode = fromRawServer(rawServer);
+					TreeItem<IPackElement> serverNode = getRawServerElement(rawServer);
 					root.getChildren().add(serverNode);
 				}
 			}
@@ -24,7 +23,15 @@ public class TreeBuilder {
 		return root;
 	}
 
-	public static TreeItem<IPackElement> fromRawServer(RawServer server) {
+	public static TreeItem<IPackElement> fromRawServer(RawServer server){
+		ServerPack pack = new ServerPack("", Version.API_VERSION);
+		TreeItem<IPackElement> root = new TreeItem<>(pack);
+		TreeItem<IPackElement> serverNode = getRawServerElement(server);
+		root.getChildren().add(serverNode);
+		return root;
+	}
+
+	public static TreeItem<IPackElement> getRawServerElement(RawServer server) {
 		TreeItem<IPackElement> serverNode = new TreeItem<>(server);
 		for (IPackElement packElement : server.getPackElements()) {
 			TreeItem<IPackElement> newNode = new TreeItem<>(packElement);

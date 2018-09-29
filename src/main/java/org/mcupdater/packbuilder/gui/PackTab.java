@@ -16,14 +16,21 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Window;
+import org.apache.commons.io.FileUtils;
+import org.mcupdater.downloadlib.Downloadable;
 import org.mcupdater.model.*;
 import org.mcupdater.mojang.VersionManifest;
 import org.mcupdater.packbuilder.gui.wrappers.*;
 import org.mcupdater.util.FastPack;
+import org.mcupdater.util.PathWalker;
 import org.mcupdater.util.ServerDefinition;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 
 public class PackTab extends Tab {
@@ -76,14 +83,13 @@ public class PackTab extends Tab {
 			tbFastServer.setOnAction(event -> {
 				RawServer newServer = promptForFastPack(tree.getScene().getWindow());
 				if(newServer != null) {
-					top[0].getChildren().add(TreeBuilder.fromRawServer(newServer));
+					top[0].getChildren().add(TreeBuilder.getRawServerElement(newServer));
 				}
 			});
 			serverGroup = new HBox(tbServer, tbNewServer, tbFastServer);
 
 			Label tbImport = new Label( "Import:");
 			Button tbNewImport = new Button("", loadResource("link_add.png"));
-			Button tbForgeImport = new Button("", loadResource("forge_add.png"));
 			tbNewImport.setOnAction(event -> {
 				Import newImport = new Import();
 				TreeItem<IPackElement> currentItem = tree.getSelectionModel().getSelectedItem();
@@ -105,6 +111,39 @@ public class PackTab extends Tab {
 				}
 				((RawServer) server.getValue()).getPackElements().add(newImport);
 				server.getChildren().add(new TreeItem<>(newImport));
+			});
+			Button tbForgeImport = new Button("", loadResource("forge_add.png"));
+			tbForgeImport.setOnAction(event -> {
+				Import newImport = new Import();
+				TreeItem<IPackElement> currentItem = tree.getSelectionModel().getSelectedItem();
+				TreeItem<IPackElement> server;
+				switch (currentItem.getValue().getClass().toString()) {
+					case "class org.mcupdater.model.RawServer":
+						server = currentItem;
+						break;
+					case "class org.mcupdater.model.Import":
+					case "class org.mcupdater.model.Module":
+						server = currentItem.getParent();
+						break;
+					case "class org.mcupdater.model.Submodule":
+					case "class org.mcupdater.model.ConfigFile":
+						server = currentItem.getParent().getParent();
+						break;
+					default:
+						server = null;
+				}
+				TextInputDialog forgeDialog = new TextInputDialog();
+				forgeDialog.setTitle("Add import");
+				forgeDialog.setHeaderText("Enter Forge version number (ex. 14.23.4.2705)");
+				forgeDialog.setContentText("Version:");
+
+				Optional<String> result = forgeDialog.showAndWait();
+				result.ifPresent(version -> {
+					newImport.setUrl("https://files.mcupdater.com/example/forge.php?mc=" + ((RawServer) server.getValue()).getVersion() + "&forge=" + version);
+					newImport.setServerId("forge");
+					((RawServer) server.getValue()).getPackElements().add(newImport);
+					server.getChildren().add(new TreeItem<>(newImport));
+				});
 			});
 			importGroup = new HBox(tbImport,tbNewImport,tbForgeImport);
 
@@ -133,12 +172,103 @@ public class PackTab extends Tab {
 				server.getChildren().add(new TreeItem<>(newModule));
 			});
 			Button tbCurseMod = new Button("", loadResource("package_go.png"));
+			tbCurseMod.setTooltip(new Tooltip("Add Mod from CurseForge"));
 			tbCurseMod.setOnAction(event -> {
-				//TODO: Curse Feed Link
+				TextInputDialog curseImport = new TextInputDialog();
+				curseImport.setTitle("Add from CurseForge");
+				curseImport.setHeaderText("Enter URL from CurseForge");
+				curseImport.setContentText("URL:");
+
+				Optional<String> result = curseImport.showAndWait();
+				result.ifPresent(stringUrl -> {
+					try {
+						URL url = new URL(stringUrl);
+						if (!url.getHost().equals("minecraft.curseforge.com") && (!url.getPath().contains("projects"))) {
+							Alert alert = new Alert(Alert.AlertType.ERROR,"Invalid CurseForge URL!",ButtonType.OK);
+							alert.show();
+						} else {
+							String[] parts = url.getPath().split("\\/");
+							Module newModule = Module.createBlankModule();
+							TreeItem<IPackElement> currentItem = tree.getSelectionModel().getSelectedItem();
+							TreeItem<IPackElement> server;
+							switch (currentItem.getValue().getClass().toString()) {
+								case "class org.mcupdater.model.RawServer":
+									server = currentItem;
+									break;
+								case "class org.mcupdater.model.Import":
+								case "class org.mcupdater.model.Module":
+									server = currentItem.getParent();
+									break;
+								case "class org.mcupdater.model.Submodule":
+								case "class org.mcupdater.model.ConfigFile":
+									server = currentItem.getParent().getParent();
+									break;
+								default:
+									server = null;
+							}
+							newModule.setName(parts[2]);
+							newModule.setId(parts[2]);
+							newModule.setRequired(true);
+							if (parts.length > 4) {
+								newModule.setCurseProject(new CurseProject(parts[2], parts[4]));
+							} else {
+								newModule.setCurseProject(new CurseProject(parts[2], ((RawServer) server.getValue()).getVersion()));
+							}
+							((RawServer) server.getValue()).getPackElements().add(newModule);
+							server.getChildren().add(new TreeItem<>(newModule));
+						}
+					} catch (MalformedURLException e) {
+						Alert alert = new Alert(Alert.AlertType.ERROR,"Invalid URL!",ButtonType.OK);
+						alert.show();
+					}
+				});
 			});
 			Button tbLinkMod = new Button("", loadResource("package_link.png"));
 			tbLinkMod.setOnAction(event -> {
-				//TODO: Download Link
+				TextInputDialog curseImport = new TextInputDialog();
+				curseImport.setTitle("Add from URL");
+				curseImport.setHeaderText("Enter URL to add");
+				curseImport.setContentText("URL:");
+
+				Optional<String> result = curseImport.showAndWait();
+				result.ifPresent(stringUrl -> {
+					TreeItem<IPackElement> currentItem = tree.getSelectionModel().getSelectedItem();
+					TreeItem<IPackElement> server;
+					switch (currentItem.getValue().getClass().toString()) {
+						case "class org.mcupdater.model.RawServer":
+							server = currentItem;
+							break;
+						case "class org.mcupdater.model.Import":
+						case "class org.mcupdater.model.Module":
+							server = currentItem.getParent();
+							break;
+						case "class org.mcupdater.model.Submodule":
+						case "class org.mcupdater.model.ConfigFile":
+							server = currentItem.getParent().getParent();
+							break;
+						default:
+							server = null;
+					}
+					//TODO: Download and process
+					final File tmp;
+					final Path path;
+					try {
+						tmp = File.createTempFile("import", ".jar");
+						FileUtils.copyURLToFile(new URL(stringUrl), tmp);
+						tmp.deleteOnExit();
+						path = tmp.toPath();
+						if( Files.size(path) == 0 ) {
+							System.out.println("!! got zero bytes from " + stringUrl);
+							return;
+						}
+						Module newModule = (Module) PathWalker.handleOneFile(new ServerDefinition(), tmp, stringUrl);
+						((RawServer) server.getValue()).getPackElements().add(newModule);
+						server.getChildren().add(new TreeItem<>(newModule));
+					} catch (IOException e) {
+						System.out.println("!! Unable to download " + stringUrl);
+						return;
+					}
+				});
 			});
 			moduleGroup = new HBox(tbMod, tbNewMod,tbCurseMod,tbLinkMod);
 
@@ -164,7 +294,54 @@ public class PackTab extends Tab {
 			});
 			Button tbCurseSubmod = new Button("", loadResource("plugin_go.png"));
 			tbCurseSubmod.setOnAction(event -> {
-				//TODO: Curse Feed Link
+				TextInputDialog curseImport = new TextInputDialog();
+				curseImport.setTitle("Add from CurseForge");
+				curseImport.setHeaderText("Enter URL from CurseForge");
+				curseImport.setContentText("URL:");
+
+				Optional<String> result = curseImport.showAndWait();
+				result.ifPresent(stringUrl -> {
+					try {
+						URL url = new URL(stringUrl);
+						if (!url.getHost().equals("minecraft.curseforge.com") && (!url.getPath().contains("projects"))) {
+							Alert alert = new Alert(Alert.AlertType.ERROR,"Invalid CurseForge URL!",ButtonType.OK);
+							alert.show();
+						} else {
+							String[] parts = url.getPath().split("\\/");
+							Submodule newModule = Submodule.createBlankSubmodule();
+							TreeItem<IPackElement> currentItem = tree.getSelectionModel().getSelectedItem();
+							TreeItem<IPackElement> module;
+							TreeItem<IPackElement> server;
+							switch (currentItem.getValue().getClass().toString()) {
+								case "class org.mcupdater.model.Module":
+									module = currentItem;
+									server = currentItem.getParent();
+									break;
+								case "class org.mcupdater.model.Submodule":
+								case "class org.mcupdater.model.ConfigFile":
+									module = currentItem.getParent();
+									server = currentItem.getParent().getParent();
+									break;
+								default:
+									module = null;
+									server = null;
+							}
+							newModule.setName(parts[2]);
+							newModule.setId(parts[2]);
+							newModule.setRequired(true);
+							if (parts.length > 4) {
+								newModule.setCurseProject(new CurseProject(parts[2], parts[4]));
+							} else {
+								newModule.setCurseProject(new CurseProject(parts[2], ((RawServer) server.getValue()).getVersion()));
+							}
+							((Module) module.getValue()).getSubmodules().add(newModule);
+							module.getChildren().add(new TreeItem<>(newModule));
+						}
+					} catch (MalformedURLException e) {
+						Alert alert = new Alert(Alert.AlertType.ERROR,"Invalid URL!",ButtonType.OK);
+						alert.show();
+					}
+				});
 			});
 			Button tbLinkSubmod = new Button("", loadResource("plugin_link.png"));
 			tbLinkSubmod.setOnAction(event -> {

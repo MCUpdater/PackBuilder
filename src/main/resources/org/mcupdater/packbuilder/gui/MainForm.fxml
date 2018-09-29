@@ -18,7 +18,7 @@
           <items>
             <MenuItem fx:id="mnuFileNew" mnemonicParsing="false" text="New" onAction="#createTab" />
             <MenuItem fx:id="mnuFileOpen" mnemonicParsing="false" text="Open…" onAction="#doOpen"/>
-            <!--<Menu fx:id="mnuFileRecent" mnemonicParsing="false" text="Open Recent" />-->
+            <MenuItem fx:id="mnuFileImport" mnemonicParsing="false" text="Import..." onAction="#doImport" />-->
             <SeparatorMenuItem mnemonicParsing="false" />
             <MenuItem fx:id="mnuFileClose" mnemonicParsing="false" text="Close" />
             <MenuItem fx:id="mnuFileSave" mnemonicParsing="false" text="Save" onAction="#doSave"/>

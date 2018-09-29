@@ -7,6 +7,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
 import org.mcupdater.api.Version;
 import org.mcupdater.model.*;
+import org.mcupdater.util.FastPack;
 import org.mcupdater.util.ServerDefinition;
 import org.mcupdater.util.ServerPackParser;
 
@@ -24,7 +25,7 @@ public class MainFormController {
 	@FXML public TabPane tabContent;
 	@FXML public MenuItem mnuFileNew;
 	@FXML public MenuItem mnuFileOpen;
-//	@FXML public Menu mnuFileRecent;
+	@FXML public MenuItem mnuFileImport;
 	@FXML public MenuItem mnuFileClose;
 	@FXML public MenuItem mnuFileSave;
 	@FXML public MenuItem mnuFileSaveAs;
@@ -157,6 +158,28 @@ public class MainFormController {
 		}
 	}
 
+	public void doImport(ActionEvent actionEvent) {
+		TextInputDialog prompt = new TextInputDialog("");
+		prompt.setTitle("Import");
+		prompt.setHeaderText("Enter URL for CurseForge modpack:");
+		prompt.setContentText("URL:");
+
+		Optional<String> result = prompt.showAndWait();
+		final TreeItem[] top = new TreeItem[1];
+		final ModifiableElement[] detailElement = new ModifiableElement[1];
+		final String[] title = new String[1];
+		result.ifPresent(url -> {
+			ServerDefinition definition = FastPack.doImport(url,"Imported Pack","import","","net.minecraft.launchwrapper.Launch","","",false,false);
+			RawServer rawServer = new RawServer(definition.getServerEntry());
+			rawServer.getPackElements().addAll(definition.getImports());
+			rawServer.getPackElements().addAll(definition.sortMods());
+			top[0] = TreeBuilder.fromRawServer(rawServer);
+			title[0] = url;
+			Tab newTab = new PackTab(top, detailElement, title[0], this);
+			tabContent.getTabs().add(newTab);
+		});
+
+	}
 
 	/* Below this line is test code that can be removed before release */
 	//TODO: Remove test code before release
@@ -210,6 +233,5 @@ public class MainFormController {
 		Tab newTab = new Tab("XML Test", content);
 		tabContent.getTabs().add(newTab);
 	}
-
 
 }

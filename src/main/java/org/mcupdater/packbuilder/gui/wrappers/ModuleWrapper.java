@@ -12,11 +12,19 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import org.apache.commons.io.FileUtils;
 import org.mcupdater.model.*;
 import org.mcupdater.packbuilder.gui.ModifiableElement;
+import org.mcupdater.util.CurseModCache;
+import org.mcupdater.util.PathWalker;
+import org.mcupdater.util.ServerDefinition;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 
 public class ModuleWrapper extends ModifiableElement {
@@ -119,6 +127,47 @@ public class ModuleWrapper extends ModifiableElement {
 			groupMeta.getChildren().addAll(fieldMeta, groupMetaControls);
 		}
 		gui.addRow(row++, new Label("Meta:"), groupMeta);
+		Button btnReparse = new Button("Reparse Mod Info");
+		btnReparse.setOnAction(event -> {
+			final File tmp;
+			final Path path;
+			URL url = null;
+			try {
+				if (!fieldCurseProject.getText().isEmpty()) {
+					int curseFile = fieldCurseFile.getText().isEmpty() ? -1 : Integer.valueOf(fieldCurseFile.getText());
+					CurseProject project = new CurseProject(fieldCurseProject.getText(),curseFile,fieldCurseType.getValue(),fieldCurseAuto.isSelected(),this.mcVersion);
+					url = new URL(CurseModCache.fetchURL(project));
+				} else {
+					if (fieldUrls.getItems().size() > 0) {
+						url = new URL(fieldUrls.getItems().get(0).getUrl());
+					} else {
+						return;
+					}
+				}
+				tmp = File.createTempFile("import", ".jar");
+				FileUtils.copyURLToFile(url, tmp);
+				tmp.deleteOnExit();
+				path = tmp.toPath();
+				if( Files.size(path) == 0 ) {
+					System.out.println("!! got zero bytes from "+url);
+					return;
+				}
+			} catch (IOException e) {
+				System.out.println("!! Unable to download "+ url);
+				e.printStackTrace();
+				return;
+			}
+			final ServerDefinition definition = new ServerDefinition();
+			final String fname = url.toString();
+			Module parsed = (Module) PathWalker.handleOneFile(definition, tmp, fname);
+			fieldName.setText(parsed.getName());
+			fieldId.setText(parsed.getId());
+			fieldSize.setText(String.valueOf(parsed.getFilesize()));
+			fieldMD5.setText(parsed.getMD5());
+			localMeta = (HashMap<String, String>) parsed.getMeta().clone();
+			fieldMeta.setItems(FXCollections.observableArrayList(localMeta.entrySet()));
+		});
+		gui.addRow(row++, btnReparse);
 		for (Node child : gui.getChildren()) {
 			if (!(child instanceof Label)){
 				child.setDisable(true);

@@ -33,7 +33,7 @@ public abstract class ModifiableElement {
 	}
 
 	protected Node loadResource(String resourceName) {
-		return new ImageView(new Image(getClass().getResourceAsStream(resourceName)));
+		return new ImageView(new Image(MainForm.class.getResourceAsStream(resourceName)));
 	}
 
 }

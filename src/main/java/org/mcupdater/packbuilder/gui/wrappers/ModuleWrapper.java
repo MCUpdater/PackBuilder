@@ -91,7 +91,7 @@ public class ModuleWrapper extends ModifiableElement {
 		gui.addRow(row++, new Label("   Release Type:"), fieldCurseType);
 		gui.addRow(row++, new Label("   AutoUpgrade:"), fieldCurseAuto);
 		gui.addRow(row++, new Pane(), new Separator(Orientation.HORIZONTAL));
-		gui.addRow(row++, new Label("Load Order Prefix:", loadResource("../stop.png")), fieldPrefix);
+		gui.addRow(row++, new Label("Load Order Prefix:", loadResource("stop.png")), fieldPrefix);
 		gui.addRow(row++, new Label("Mod Path:"), fieldModPath);
 		gui.addRow(row++, new Label("Size:"), fieldSize);
 		gui.addRow(row++, new Label("Required:"), fieldRequired);
@@ -100,8 +100,8 @@ public class ModuleWrapper extends ModifiableElement {
 		gui.addRow(row++, new Label("   (Extract) In Root:"), fieldInRoot);
 		gui.addRow(row++, new Label("   Order:"), fieldOrder);
 		gui.addRow(row++, new Label("   (Jar) Keep META-INF:"), fieldKeepMeta);
-		gui.addRow(row++, new Label("   Special Launch Args:", loadResource("../stop.png")), fieldLaunchArgs);
-		gui.addRow(row++, new Label("   Special Java Args:", loadResource("../stop.png")), fieldJreArgs);
+		gui.addRow(row++, new Label("   Special Launch Args:", loadResource("stop.png")), fieldLaunchArgs);
+		gui.addRow(row++, new Label("   Special Java Args:", loadResource("stop.png")), fieldJreArgs);
 		gui.addRow(row++, new Label("MD5:"), fieldMD5);
 		VBox groupMeta = new VBox();
 		{
@@ -253,12 +253,6 @@ public class ModuleWrapper extends ModifiableElement {
 		element.setDepends(fieldDepends.getText());
 		element.setSide(fieldSide.getValue());
 		element.setUrls(fieldUrls.getItems());
-		if (!fieldCurseProject.getText().isEmpty()) {
-			int curseFile = fieldCurseFile.getText().isEmpty() ? -1 : Integer.valueOf(fieldCurseFile.getText());
-			element.setCurseProject(new CurseProject(fieldCurseProject.getText(),curseFile,fieldCurseType.getValue(),fieldCurseAuto.isSelected(),this.mcVersion));
-		} else {
-			element.setCurseProject(null);
-		}
 		element.setLoadPrefix(fieldPrefix.getText());
 		element.setPath(fieldModPath.getText());
 		element.setFilesize(Long.parseLong(fieldSize.getText()));
@@ -267,11 +261,17 @@ public class ModuleWrapper extends ModifiableElement {
 		element.setModType(fieldModType.getValue());
 		element.setInRoot(fieldInRoot.isSelected());
 		element.setJarOrder(Integer.parseInt(fieldOrder.getText()));
-		fieldKeepMeta.setSelected(element.getKeepMeta());
-		fieldLaunchArgs.setText(element.getLaunchArgs());
-		fieldJreArgs.setText(element.getJreArgs());
-		fieldMD5.setText(element.getMD5());
+		element.setKeepMeta(fieldKeepMeta.isSelected());
+		element.setLaunchArgs(fieldLaunchArgs.getText());
+		element.setJreArgs(fieldJreArgs.getText());
+		element.setMD5(fieldMD5.getText());
 		element.setMeta(localMeta);
+		if (!fieldCurseProject.getText().isEmpty()) {
+			int curseFile = fieldCurseFile.getText().isEmpty() ? -1 : Integer.valueOf(fieldCurseFile.getText());
+			element.setCurseProject(new CurseProject(fieldCurseProject.getText(),curseFile,fieldCurseType.getValue(),fieldCurseAuto.isSelected(),this.mcVersion));
+		} else {
+			element.setCurseProject(null);
+		}
 	}
 
 	@Override

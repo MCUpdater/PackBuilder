@@ -2,20 +2,14 @@ package org.mcupdater.packbuilder.gui;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
 import javafx.scene.image.Image;
-import javafx.scene.layout.*;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-import org.jdesktop.swingx.JXTable;
 import org.mcupdater.api.Version;
-import org.mcupdater.model.*;
-import org.mcupdater.util.ServerPackParser;
 
 import java.lang.reflect.Field;
-import java.util.*;
-
+import java.util.Arrays;
 import java.util.List;
 
 public class MainForm extends Application {

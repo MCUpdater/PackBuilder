@@ -2,11 +2,8 @@ package org.mcupdater.packbuilder;
 
 import javafx.application.Application;
 import org.mcupdater.packbuilder.gui.MainForm;
-import org.mcupdater.packbuilder.gui.TextContextMenu;
 import org.mcupdater.util.MCUpdater;
 
-import javax.swing.*;
-import java.awt.*;
 import java.io.File;
 
 public class Main {

@@ -17,7 +17,6 @@ import javafx.scene.layout.*;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Window;
 import org.apache.commons.io.FileUtils;
-import org.mcupdater.downloadlib.Downloadable;
 import org.mcupdater.model.*;
 import org.mcupdater.mojang.VersionManifest;
 import org.mcupdater.packbuilder.gui.wrappers.*;

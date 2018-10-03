@@ -40,10 +40,10 @@ public class ServerWrapper extends ModifiableElement {
 		gui.addRow(row++, new Label("Generate Server List:"), fieldGenerateList);
 		gui.addRow(row++, new Label("AutoConnect:"), fieldAutoConnect);
 		gui.addRow(row++, new Label("Revision:"), fieldRevision);
-		gui.addRow(row++, new Label("Main Class:", loadResource("../stop.png")), fieldMainClass);
-		gui.addRow(row++, new Label("Server Class:", loadResource("../stop.png")), fieldServerClass);
-		gui.addRow(row++, new Label("Launcher Type:", loadResource("../stop.png")), fieldLauncherType);
-		gui.addRow(row++, new Label("Lib Overrides:", loadResource("../stop.png")), fieldLibOverrides);
+		gui.addRow(row++, new Label("Main Class:", loadResource("stop.png")), fieldMainClass);
+		gui.addRow(row++, new Label("Server Class:", loadResource("stop.png")), fieldServerClass);
+		gui.addRow(row++, new Label("Launcher Type:", loadResource("stop.png")), fieldLauncherType);
+		gui.addRow(row++, new Label("Lib Overrides:", loadResource("stop.png")), fieldLibOverrides);
 		for (Node child : gui.getChildren()) {
 			if (!(child instanceof Label)) {
 				child.setDisable(true);

@@ -90,6 +90,8 @@ public class ModuleWrapper extends ModifiableElement {
 		gui.addRow(row++, new Label("   File:"), fieldCurseFile);
 		gui.addRow(row++, new Label("   Release Type:"), fieldCurseType);
 		gui.addRow(row++, new Label("   AutoUpgrade:"), fieldCurseAuto);
+		Button btnUpdate = new Button("Update to newest release");
+		gui.addRow(row++, new Label(""), btnUpdate);
 		gui.addRow(row++, new Pane(), new Separator(Orientation.HORIZONTAL));
 		gui.addRow(row++, new Label("Load Order Prefix:", loadResource("stop.png")), fieldPrefix);
 		gui.addRow(row++, new Label("Mod Path:"), fieldModPath);
@@ -145,6 +147,7 @@ public class ModuleWrapper extends ModifiableElement {
 					}
 				}
 				tmp = File.createTempFile("import", ".jar");
+
 				FileUtils.copyURLToFile(url, tmp);
 				tmp.deleteOnExit();
 				path = tmp.toPath();
@@ -168,6 +171,11 @@ public class ModuleWrapper extends ModifiableElement {
 			fieldMeta.setItems(FXCollections.observableArrayList(localMeta.entrySet()));
 		});
 		gui.addRow(row++, btnReparse);
+		btnUpdate.setOnAction(event -> {
+			fieldCurseFile.setText("");
+			btnReparse.fire();
+		});
+
 		for (Node child : gui.getChildren()) {
 			if (!(child instanceof Label)){
 				child.setDisable(true);

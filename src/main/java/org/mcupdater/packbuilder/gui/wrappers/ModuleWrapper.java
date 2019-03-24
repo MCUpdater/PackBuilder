@@ -12,10 +12,11 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import org.apache.commons.io.FileUtils;
+import org.mcupdater.downloadlib.Downloadable;
 import org.mcupdater.model.*;
 import org.mcupdater.packbuilder.gui.ModifiableElement;
 import org.mcupdater.util.CurseModCache;
+import org.mcupdater.util.MCUpdater;
 import org.mcupdater.util.PathWalker;
 import org.mcupdater.util.ServerDefinition;
 
@@ -139,6 +140,7 @@ public class ModuleWrapper extends ModifiableElement {
 					int curseFile = fieldCurseFile.getText().isEmpty() ? -1 : Integer.valueOf(fieldCurseFile.getText());
 					CurseProject project = new CurseProject(fieldCurseProject.getText(),curseFile,fieldCurseType.getValue(),fieldCurseAuto.isSelected(),this.mcVersion);
 					url = new URL(CurseModCache.fetchURL(project));
+					fieldCurseFile.setText(Integer.toString(project.getFile()));
 				} else {
 					if (fieldUrls.getItems().size() > 0) {
 						url = new URL(fieldUrls.getItems().get(0).getUrl());
@@ -148,7 +150,9 @@ public class ModuleWrapper extends ModifiableElement {
 				}
 				tmp = File.createTempFile("import", ".jar");
 
-				FileUtils.copyURLToFile(url, tmp);
+				System.out.println("Temp file: " + tmp.getAbsolutePath());
+				Downloadable downloadable = new Downloadable("import.jar",tmp.getAbsolutePath(),"force",0, new ArrayList<>(Collections.singleton(url)));
+				downloadable.download(tmp.getParentFile().getParentFile(),MCUpdater.getInstance().getArchiveFolder().resolve("cache").toFile());
 				tmp.deleteOnExit();
 				path = tmp.toPath();
 				if( Files.size(path) == 0 ) {
@@ -163,12 +167,14 @@ public class ModuleWrapper extends ModifiableElement {
 			final ServerDefinition definition = new ServerDefinition();
 			final String fname = url.toString();
 			Module parsed = (Module) PathWalker.handleOneFile(definition, tmp, fname);
-			fieldName.setText(parsed.getName());
-			fieldId.setText(parsed.getId());
+			if (!parsed.getId().startsWith("import")) {
+				fieldName.setText(parsed.getName());
+				fieldId.setText(parsed.getId());
+				localMeta = (HashMap<String, String>) parsed.getMeta().clone();
+				fieldMeta.setItems(FXCollections.observableArrayList(localMeta.entrySet()));
+			}
 			fieldSize.setText(String.valueOf(parsed.getFilesize()));
 			fieldMD5.setText(parsed.getMD5());
-			localMeta = (HashMap<String, String>) parsed.getMeta().clone();
-			fieldMeta.setItems(FXCollections.observableArrayList(localMeta.entrySet()));
 		});
 		gui.addRow(row++, btnReparse);
 		btnUpdate.setOnAction(event -> {

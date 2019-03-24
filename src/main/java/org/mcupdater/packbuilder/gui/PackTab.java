@@ -16,7 +16,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Window;
-import org.apache.commons.io.FileUtils;
+import org.mcupdater.downloadlib.DownloadUtil;
 import org.mcupdater.model.*;
 import org.mcupdater.mojang.VersionManifest;
 import org.mcupdater.packbuilder.gui.wrappers.*;
@@ -253,7 +253,7 @@ public class PackTab extends Tab {
 					final Path path;
 					try {
 						tmp = File.createTempFile("import", ".jar");
-						FileUtils.copyURLToFile(new URL(stringUrl), tmp);
+						DownloadUtil.get(new URL(stringUrl), tmp);
 						tmp.deleteOnExit();
 						path = tmp.toPath();
 						if( Files.size(path) == 0 ) {

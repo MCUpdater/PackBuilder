@@ -110,6 +110,7 @@ public class PackTab extends Tab {
 				}
 				((RawServer) server.getValue()).getPackElements().add(newImport);
 				server.getChildren().add(new TreeItem<>(newImport));
+				server.setExpanded(true);
 			});
 			Button tbForgeImport = new Button("", loadResource("forge_add.png"));
 			tbForgeImport.setOnAction(event -> {
@@ -142,6 +143,7 @@ public class PackTab extends Tab {
 					newImport.setServerId("forge");
 					((RawServer) server.getValue()).getPackElements().add(newImport);
 					server.getChildren().add(new TreeItem<>(newImport));
+					server.setExpanded(true);
 				});
 			});
 			importGroup = new HBox(tbImport,tbNewImport,tbForgeImport);
@@ -169,6 +171,7 @@ public class PackTab extends Tab {
 				}
 				((RawServer) server.getValue()).getPackElements().add(newModule);
 				server.getChildren().add(new TreeItem<>(newModule));
+				server.setExpanded(true);
 			});
 			Button tbCurseMod = new Button("", loadResource("package_go.png"));
 			tbCurseMod.setTooltip(new Tooltip("Add Mod from CurseForge"));
@@ -215,6 +218,7 @@ public class PackTab extends Tab {
 							}
 							((RawServer) server.getValue()).getPackElements().add(newModule);
 							server.getChildren().add(new TreeItem<>(newModule));
+							server.setExpanded(true);
 						}
 					} catch (MalformedURLException e) {
 						Alert alert = new Alert(Alert.AlertType.ERROR,"Invalid URL!",ButtonType.OK);
@@ -263,6 +267,7 @@ public class PackTab extends Tab {
 						Module newModule = (Module) PathWalker.handleOneFile(new ServerDefinition(), tmp, stringUrl);
 						((RawServer) server.getValue()).getPackElements().add(newModule);
 						server.getChildren().add(new TreeItem<>(newModule));
+						server.setExpanded(true);
 					} catch (IOException e) {
 						System.out.println("!! Unable to download " + stringUrl);
 						return;
@@ -290,6 +295,7 @@ public class PackTab extends Tab {
 				}
 				((Module) module.getValue()).getSubmodules().add(newModule);
 				module.getChildren().add(new TreeItem<>(newModule));
+				module.setExpanded(true);
 			});
 			Button tbCurseSubmod = new Button("", loadResource("plugin_go.png"));
 			tbCurseSubmod.setOnAction(event -> {
@@ -335,6 +341,7 @@ public class PackTab extends Tab {
 							}
 							((Module) module.getValue()).getSubmodules().add(newModule);
 							module.getChildren().add(new TreeItem<>(newModule));
+							module.setExpanded(true);
 						}
 					} catch (MalformedURLException e) {
 						Alert alert = new Alert(Alert.AlertType.ERROR,"Invalid URL!",ButtonType.OK);
@@ -367,6 +374,7 @@ public class PackTab extends Tab {
 				}
 				((Module) module.getValue()).getConfigs().add(newConfigFile);
 				module.getChildren().add(new TreeItem<>(newConfigFile));
+				module.setExpanded(true);
 			});
 			Button tbLinkConfig = new Button("", loadResource("page_white_link.png"));
 			tbLinkConfig.setOnAction(event -> {

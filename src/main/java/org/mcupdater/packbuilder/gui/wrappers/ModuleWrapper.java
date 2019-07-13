@@ -132,41 +132,18 @@ public class ModuleWrapper extends ModifiableElement {
 		gui.addRow(row++, new Label("Meta:"), groupMeta);
 		Button btnReparse = new Button("Reparse Mod Info");
 		btnReparse.setOnAction(event -> {
-			final File tmp;
-			final Path path;
-			URL url = null;
-			try {
-				if (!fieldCurseProject.getText().isEmpty()) {
-					int curseFile = fieldCurseFile.getText().isEmpty() ? -1 : Integer.valueOf(fieldCurseFile.getText());
-					CurseProject project = new CurseProject(fieldCurseProject.getText(),curseFile,fieldCurseType.getValue(),fieldCurseAuto.isSelected(),this.mcVersion);
-					url = new URL(CurseModCache.fetchURL(project));
-					fieldCurseFile.setText(Integer.toString(project.getFile()));
-				} else {
-					if (fieldUrls.getItems().size() > 0) {
-						url = new URL(fieldUrls.getItems().get(0).getUrl());
-					} else {
-						return;
-					}
-				}
-				tmp = File.createTempFile("import", ".jar");
-
-				System.out.println("Temp file: " + tmp.getAbsolutePath());
-				Downloadable downloadable = new Downloadable("import.jar",tmp.getAbsolutePath(),"force",0, new ArrayList<>(Collections.singleton(url)));
-				downloadable.download(tmp.getParentFile().getParentFile(),MCUpdater.getInstance().getArchiveFolder().resolve("cache").toFile());
-				tmp.deleteOnExit();
-				path = tmp.toPath();
-				if( Files.size(path) == 0 ) {
-					System.out.println("!! got zero bytes from "+url);
-					return;
-				}
-			} catch (IOException e) {
-				System.out.println("!! Unable to download "+ url);
-				e.printStackTrace();
-				return;
+			CurseProject project = null;
+			if (!fieldCurseProject.getText().isEmpty()) {
+				int curseFile = fieldCurseFile.getText().isEmpty() ? -1 : Integer.valueOf(fieldCurseFile.getText());
+				project = new CurseProject(fieldCurseProject.getText(), curseFile, fieldCurseType.getValue(), fieldCurseAuto.isSelected(), mcVersion);
 			}
-			final ServerDefinition definition = new ServerDefinition();
-			final String fname = url.toString();
-			Module parsed = (Module) PathWalker.handleOneFile(definition, tmp, fname);
+			Module parsed = null;
+			try {
+				parsed = Module.parseFile(project,fieldUrls.getItems());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			fieldCurseFile.setText(String.valueOf(parsed.getCurseProject().getFile()));
 			if (!parsed.getId().startsWith("import")) {
 				fieldName.setText(parsed.getName());
 				fieldId.setText(parsed.getId());

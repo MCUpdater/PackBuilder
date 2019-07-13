@@ -185,7 +185,7 @@ public class PackTab extends Tab {
 				result.ifPresent(stringUrl -> {
 					try {
 						URL url = new URL(stringUrl);
-						if (!url.getHost().equals("minecraft.curseforge.com") && (!url.getPath().contains("projects"))) {
+						if (!isCurseURL(url)) {
 							Alert alert = new Alert(Alert.AlertType.ERROR,"Invalid CurseForge URL!",ButtonType.OK);
 							alert.show();
 						} else {
@@ -208,13 +208,22 @@ public class PackTab extends Tab {
 								default:
 									server = null;
 							}
-							newModule.setName(parts[2]);
-							newModule.setId(parts[2]);
+							newModule.setName(parts[3]);
+							newModule.setId(parts[3]);
 							newModule.setRequired(true);
-							if (parts.length > 4) {
-								newModule.setCurseProject(new CurseProject(parts[2], parts[4]));
+							if (parts.length > 5) {
+								newModule.setCurseProject(new CurseProject(parts[3], parts[5]));
 							} else {
-								newModule.setCurseProject(new CurseProject(parts[2], ((RawServer) server.getValue()).getVersion()));
+								newModule.setCurseProject(new CurseProject(parts[3], ((RawServer) server.getValue()).getVersion()));
+							}
+							Module parsedMod = Module.parseFile(newModule.getCurseProject(), newModule.getPrioritizedUrls());
+							if (parsedMod != null) {
+								newModule.setName(parsedMod.getName());
+								newModule.setId(parsedMod.getId());
+								newModule.setCurseProject(parsedMod.getCurseProject());
+								newModule.setMD5(parsedMod.getMD5());
+								newModule.setFilesize(parsedMod.getFilesize());
+								newModule.setMeta(parsedMod.getMeta());
 							}
 							((RawServer) server.getValue()).getPackElements().add(newModule);
 							server.getChildren().add(new TreeItem<>(newModule));
@@ -222,6 +231,9 @@ public class PackTab extends Tab {
 						}
 					} catch (MalformedURLException e) {
 						Alert alert = new Alert(Alert.AlertType.ERROR,"Invalid URL!",ButtonType.OK);
+						alert.show();
+					} catch (Exception e) {
+						Alert alert = new Alert(Alert.AlertType.ERROR, e.getMessage(),ButtonType.OK);
 						alert.show();
 					}
 				});
@@ -308,7 +320,7 @@ public class PackTab extends Tab {
 				result.ifPresent(stringUrl -> {
 					try {
 						URL url = new URL(stringUrl);
-						if (!url.getHost().equals("minecraft.curseforge.com") && (!url.getPath().contains("projects"))) {
+						if (!isCurseURL(url)) {
 							Alert alert = new Alert(Alert.AlertType.ERROR,"Invalid CurseForge URL!",ButtonType.OK);
 							alert.show();
 						} else {
@@ -331,13 +343,22 @@ public class PackTab extends Tab {
 									module = null;
 									server = null;
 							}
-							newModule.setName(parts[2]);
-							newModule.setId(parts[2]);
+							newModule.setName(parts[3]);
+							newModule.setId(parts[3]);
 							newModule.setRequired(true);
-							if (parts.length > 4) {
-								newModule.setCurseProject(new CurseProject(parts[2], parts[4]));
+							if (parts.length > 5) {
+								newModule.setCurseProject(new CurseProject(parts[3], parts[5]));
 							} else {
-								newModule.setCurseProject(new CurseProject(parts[2], ((RawServer) server.getValue()).getVersion()));
+								newModule.setCurseProject(new CurseProject(parts[3], ((RawServer) server.getValue()).getVersion()));
+							}
+							Module parsedMod = Module.parseFile(newModule.getCurseProject(), newModule.getPrioritizedUrls());
+							if (parsedMod != null) {
+								newModule.setName(parsedMod.getName());
+								newModule.setId(parsedMod.getId());
+								newModule.setCurseProject(parsedMod.getCurseProject());
+								newModule.setMD5(parsedMod.getMD5());
+								newModule.setFilesize(parsedMod.getFilesize());
+								newModule.setMeta(parsedMod.getMeta());
 							}
 							((Module) module.getValue()).getSubmodules().add(newModule);
 							module.getChildren().add(new TreeItem<>(newModule));
@@ -345,6 +366,9 @@ public class PackTab extends Tab {
 						}
 					} catch (MalformedURLException e) {
 						Alert alert = new Alert(Alert.AlertType.ERROR,"Invalid URL!",ButtonType.OK);
+						alert.show();
+					} catch (Exception e) {
+						Alert alert = new Alert(Alert.AlertType.ERROR, e.getMessage(),ButtonType.OK);
 						alert.show();
 					}
 				});
@@ -395,6 +419,10 @@ public class PackTab extends Tab {
 		BorderPane content = new BorderPane(detailWrapper,toolBar,null,null, tree);
 		this.setContent(content);
 		this.setText(text);
+	}
+
+	private boolean isCurseURL(URL url) {
+		return url.getHost().equals("www.curseforge.com") && (url.getPath().contains("mc-mods"));
 	}
 
 	private RawServer promptForFastPack(Window parent) {

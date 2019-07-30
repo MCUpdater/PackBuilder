@@ -80,12 +80,14 @@ public class MainFormController {
 					RawServer server = (RawServer) child.getValue();
 					ServerDefinition.generateServerHeaderXML(server, writer);
 					List<Import> imports = new ArrayList<>();
+					List<Loader> loaders = new ArrayList<>();
 					List<Module> modules = new ArrayList<>();
 					for (IPackElement element : server.getPackElements()) {
 						if (element instanceof Import) imports.add((Import) element);
+						if (element instanceof Loader) loaders.add((Loader) element);
 						if (element instanceof Module) modules.add((Module) element);
 					}
-					ServerDefinition.generateServerDetailXML(writer, imports, modules, false);
+					ServerDefinition.generateServerDetailXML(writer, imports, loaders, modules, false);
 					ServerDefinition.generateServerFooterXML(writer);
 				}
 			}
@@ -214,12 +216,14 @@ public class MainFormController {
 				if (server instanceof RawServer) {
 					ServerDefinition.generateServerHeaderXML(server, writer);
 					List<Import> imports = new ArrayList<>();
+					List<Loader> loaders = new ArrayList<>();
 					List<Module> modules = new ArrayList<>();
 					for (IPackElement element : ((RawServer) server).getPackElements()) {
 						if (element instanceof Import) imports.add((Import) element);
+						if (element instanceof Loader) loaders.add((Loader) element);
 						if (element instanceof Module) modules.add((Module) element);
 					}
-					ServerDefinition.generateServerDetailXML(writer, imports, modules, false);
+					ServerDefinition.generateServerDetailXML(writer, imports, loaders, modules, false);
 					ServerDefinition.generateServerFooterXML(writer);
 				}
 			}

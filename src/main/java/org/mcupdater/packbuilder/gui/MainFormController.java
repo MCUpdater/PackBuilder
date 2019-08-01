@@ -174,6 +174,11 @@ public class MainFormController {
 			ServerDefinition definition = FastPack.doImport(url,"Imported Pack","import","","net.minecraft.launchwrapper.Launch","","",false,false);
 			RawServer rawServer = new RawServer(definition.getServerEntry());
 			rawServer.getPackElements().addAll(definition.getImports());
+			List<Loader> loaders = definition.getLoaders();
+			if (loaders.size() > 0) {
+				rawServer.getPackElements().addAll(definition.getLoaders());
+				rawServer.setMainClass(loaders.get(0).getILoader().getMainClassClient());
+			}
 			rawServer.getPackElements().addAll(definition.sortMods());
 			top[0] = TreeBuilder.fromRawServer(rawServer);
 			title[0] = url;

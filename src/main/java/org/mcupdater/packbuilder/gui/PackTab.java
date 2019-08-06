@@ -114,7 +114,7 @@ public class PackTab extends Tab {
 			});
 			Button tbForgeImport = new Button("", loadResource("forge_add.png"));
 			tbForgeImport.setOnAction(event -> {
-				Import newImport = new Import();
+				Loader newLoader = new Loader();
 				TreeItem<IPackElement> currentItem = tree.getSelectionModel().getSelectedItem();
 				TreeItem<IPackElement> server;
 				switch (currentItem.getValue().getClass().toString()) {
@@ -122,6 +122,7 @@ public class PackTab extends Tab {
 						server = currentItem;
 						break;
 					case "class org.mcupdater.model.Import":
+					case "class org.mcupdater.model.Loader":
 					case "class org.mcupdater.model.Module":
 						server = currentItem.getParent();
 						break;
@@ -134,16 +135,18 @@ public class PackTab extends Tab {
 				}
 				TextInputDialog forgeDialog = new TextInputDialog();
 				forgeDialog.setTitle("Add import");
-				forgeDialog.setHeaderText("Enter Forge version number (ex. 14.23.4.2705)");
+				forgeDialog.setHeaderText("Enter Forge version number (ex. 1.14.4-28.0.11)");
 				forgeDialog.setContentText("Version:");
 
 				Optional<String> result = forgeDialog.showAndWait();
 				result.ifPresent(version -> {
-					newImport.setUrl("https://files.mcupdater.com/example/forge.php?mc=" + ((RawServer) server.getValue()).getVersion() + "&forge=" + version);
-					newImport.setServerId("forge");
-					((RawServer) server.getValue()).getPackElements().add(newImport);
-					server.getChildren().add(new TreeItem<>(newImport));
+					newLoader.setType("Forge");
+					newLoader.setVersion(forgeDialog.getResult());
+					newLoader.setLoadOrder(0);
+					((RawServer) server.getValue()).getPackElements().add(newLoader);
+					server.getChildren().add(new TreeItem<>(newLoader));
 					server.setExpanded(true);
+					((RawServer) server.getValue()).setMainClass(newLoader.getILoader().getMainClassClient());
 				});
 			});
 			importGroup = new HBox(tbImport,tbNewImport,tbForgeImport);
@@ -623,6 +626,16 @@ public class PackTab extends Tab {
 						Import anImport = (Import) treeItem.getValue();
 						rawServer = (treeItem.getParent().getValue() instanceof RawServer ? (RawServer) treeItem.getParent().getValue() : (RawServer) treeItem.getParent().getParent().getValue());
 						current[0] = new ImportWrapper(anImport, detailPanel, rawServer.getVersion());
+						serverGroup.setVisible(true);
+						importGroup.setVisible(true);
+						moduleGroup.setVisible(true);
+						submoduleGroup.setVisible(false);
+						configGroup.setVisible(false);
+						break;
+					case "class org.mcupdater.model.Loader":
+						Loader anLoader = (Loader) treeItem.getValue();
+						rawServer = (treeItem.getParent().getValue() instanceof RawServer ? (RawServer) treeItem.getParent().getValue() : (RawServer) treeItem.getParent().getParent().getValue());
+						current[0] = new LoaderWrapper(anLoader, detailPanel, rawServer.getVersion());
 						serverGroup.setVisible(true);
 						importGroup.setVisible(true);
 						moduleGroup.setVisible(true);

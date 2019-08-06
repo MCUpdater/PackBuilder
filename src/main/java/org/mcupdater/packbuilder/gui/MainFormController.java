@@ -80,12 +80,14 @@ public class MainFormController {
 					RawServer server = (RawServer) child.getValue();
 					ServerDefinition.generateServerHeaderXML(server, writer);
 					List<Import> imports = new ArrayList<>();
+					List<Loader> loaders = new ArrayList<>();
 					List<Module> modules = new ArrayList<>();
 					for (IPackElement element : server.getPackElements()) {
 						if (element instanceof Import) imports.add((Import) element);
+						if (element instanceof Loader) loaders.add((Loader) element);
 						if (element instanceof Module) modules.add((Module) element);
 					}
-					ServerDefinition.generateServerDetailXML(writer, imports, modules, false);
+					ServerDefinition.generateServerDetailXML(writer, imports, loaders, modules, false);
 					ServerDefinition.generateServerFooterXML(writer);
 				}
 			}
@@ -172,6 +174,11 @@ public class MainFormController {
 			ServerDefinition definition = FastPack.doImport(url,"Imported Pack","import","","net.minecraft.launchwrapper.Launch","","",false,false);
 			RawServer rawServer = new RawServer(definition.getServerEntry());
 			rawServer.getPackElements().addAll(definition.getImports());
+			List<Loader> loaders = definition.getLoaders();
+			if (loaders.size() > 0) {
+				rawServer.getPackElements().addAll(definition.getLoaders());
+				rawServer.setMainClass(loaders.get(0).getILoader().getMainClassClient());
+			}
 			rawServer.getPackElements().addAll(definition.sortMods());
 			top[0] = TreeBuilder.fromRawServer(rawServer);
 			title[0] = url;
@@ -214,12 +221,14 @@ public class MainFormController {
 				if (server instanceof RawServer) {
 					ServerDefinition.generateServerHeaderXML(server, writer);
 					List<Import> imports = new ArrayList<>();
+					List<Loader> loaders = new ArrayList<>();
 					List<Module> modules = new ArrayList<>();
 					for (IPackElement element : ((RawServer) server).getPackElements()) {
 						if (element instanceof Import) imports.add((Import) element);
+						if (element instanceof Loader) loaders.add((Loader) element);
 						if (element instanceof Module) modules.add((Module) element);
 					}
-					ServerDefinition.generateServerDetailXML(writer, imports, modules, false);
+					ServerDefinition.generateServerDetailXML(writer, imports, loaders, modules, false);
 					ServerDefinition.generateServerFooterXML(writer);
 				}
 			}

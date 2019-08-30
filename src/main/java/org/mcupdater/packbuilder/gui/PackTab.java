@@ -98,6 +98,7 @@ public class PackTab extends Tab {
 						server = currentItem;
 						break;
 					case "class org.mcupdater.model.Import":
+					case "class org.mcupdater.model.Loader":
 					case "class org.mcupdater.model.Module":
 						server = currentItem.getParent();
 						break;
@@ -162,6 +163,7 @@ public class PackTab extends Tab {
 						server = currentItem;
 						break;
 					case "class org.mcupdater.model.Import":
+					case "class org.mcupdater.model.Loader":
 					case "class org.mcupdater.model.Module":
 						server = currentItem.getParent();
 						break;
@@ -201,6 +203,7 @@ public class PackTab extends Tab {
 									server = currentItem;
 									break;
 								case "class org.mcupdater.model.Import":
+								case "class org.mcupdater.model.Loader":
 								case "class org.mcupdater.model.Module":
 									server = currentItem.getParent();
 									break;
@@ -215,7 +218,7 @@ public class PackTab extends Tab {
 							newModule.setId(parts[3]);
 							newModule.setRequired(true);
 							if (parts.length > 5) {
-								newModule.setCurseProject(new CurseProject(parts[3], parts[5]));
+								newModule.setCurseProject(new CurseProject(parts[3], Integer.valueOf(parts[5])));
 							} else {
 								newModule.setCurseProject(new CurseProject(parts[3], ((RawServer) server.getValue()).getVersion()));
 							}
@@ -257,6 +260,7 @@ public class PackTab extends Tab {
 							server = currentItem;
 							break;
 						case "class org.mcupdater.model.Import":
+						case "class org.mcupdater.model.Loader":
 						case "class org.mcupdater.model.Module":
 							server = currentItem.getParent();
 							break;

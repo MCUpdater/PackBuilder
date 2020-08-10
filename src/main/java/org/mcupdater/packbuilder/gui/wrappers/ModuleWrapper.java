@@ -143,7 +143,9 @@ public class ModuleWrapper extends ModifiableElement {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			fieldCurseFile.setText(String.valueOf(parsed.getCurseProject().getFile()));
+			if (parsed.getCurseProject() != null) {
+				fieldCurseFile.setText(String.valueOf(parsed.getCurseProject().getFile()));
+			}
 			if (!parsed.getId().startsWith("import")) {
 				fieldName.setText(parsed.getName());
 				fieldId.setText(parsed.getId());

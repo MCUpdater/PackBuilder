@@ -487,7 +487,7 @@ public class PackTab extends Tab {
 			}
 			ServerDefinition fastpack = FastPack.doFastPack("","","FastPack","fastpack","","net.minecraft.launchwrapper.Launch","about:blank","","1",false, mcVersion, source.toPath(), baseUrl,false);
 			if (fastpack.hasLitemods && !fastpack.hasMod(fastpack.sortMods(), "liteloader")) {
-				fastpack.addModule(new Module("LiteLoader", "liteloader", Arrays.asList(new PrioritizedURL("http://dl.liteloader.com/versions/com/mumfrey/liteloader/" + mcVersion + "/liteloader-" + mcVersion + ".jar", 0)), null, "", false, ModType.Library, 100, false, false, true, "", null, "CLIENT", "", null, "--tweakClass com.mumfrey.liteloader.launch.LiteLoaderTweaker", "", null, ""));
+				fastpack.addModule(new Module("LiteLoader", "liteloader", Arrays.asList(new PrioritizedURL("http://dl.liteloader.com/versions/com/mumfrey/liteloader/" + mcVersion + "/liteloader-" + mcVersion + ".jar", 0)), null, 100000, "", false, ModType.Library, 100, false, false, true, "", null, "CLIENT", "", null, "--tweakClass com.mumfrey.liteloader.launch.LiteLoaderTweaker", "", null, ""));
 			}
 			if (!forgeVersion.isEmpty()) {
 				fastpack.addForge(mcVersion, forgeVersion);

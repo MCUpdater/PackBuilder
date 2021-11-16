@@ -18,6 +18,7 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.Window;
 import org.mcupdater.downloadlib.DownloadUtil;
 import org.mcupdater.model.*;
+import org.mcupdater.model.Module;
 import org.mcupdater.mojang.VersionManifest;
 import org.mcupdater.packbuilder.gui.wrappers.*;
 import org.mcupdater.util.FastPack;
@@ -485,7 +486,7 @@ public class PackTab extends Tab {
 					forgeVersion = result.get();
 				}
 			}
-			ServerDefinition fastpack = FastPack.doFastPack("","","FastPack","fastpack","","net.minecraft.launchwrapper.Launch","about:blank","","1",false, mcVersion, source.toPath(), baseUrl,false);
+			ServerDefinition fastpack = FastPack.doFastPack("","","FastPack","fastpack","","net.minecraft.launchwrapper.Launch","about:blank","","1",false, mcVersion, source.toPath(), baseUrl,false, null);
 			if (fastpack.hasLitemods && !fastpack.hasMod(fastpack.sortMods(), "liteloader")) {
 				fastpack.addModule(new Module("LiteLoader", "liteloader", Arrays.asList(new PrioritizedURL("http://dl.liteloader.com/versions/com/mumfrey/liteloader/" + mcVersion + "/liteloader-" + mcVersion + ".jar", 0)), null, 100000, "", false, ModType.Library, 100, false, false, true, "", null, "CLIENT", "", null, "--tweakClass com.mumfrey.liteloader.launch.LiteLoaderTweaker", "", null, ""));
 			}

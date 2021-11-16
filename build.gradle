@@ -1,0 +1,26 @@
+plugins {
+    id 'workspace.java-application-conventions'
+    id 'org.openjfx.javafxplugin' version '0.0.10'
+}
+
+javafx {
+    version = '16'
+    modules = [ 'javafx.controls', 'javafx.fxml' ]
+}
+
+version = sharedVersion
+
+dependencies {
+    implementation project(':MCU-API')
+    implementation project(':MCU-DownloadLib')
+}
+
+task fatJar(type: Jar) {
+    duplicatesStrategy DuplicatesStrategy.INCLUDE
+    from configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    manifest {
+        attributes "Main-Class": 'org.mcupdater.packbuilder.Main'
+    }
+}
+
+jar.setDependsOn([':MCU-API:jar',':MCU-DownloadLib:jar'])

@@ -14,6 +14,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import org.mcupdater.downloadlib.Downloadable;
 import org.mcupdater.model.*;
+import org.mcupdater.model.Module;
 import org.mcupdater.packbuilder.gui.ModifiableElement;
 import org.mcupdater.util.CurseModCache;
 import org.mcupdater.util.MCUpdater;

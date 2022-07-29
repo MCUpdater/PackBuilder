@@ -6,20 +6,30 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import org.mcupdater.FMLStyleFormatter;
 import org.mcupdater.api.Version;
+import org.mcupdater.util.MCUpdater;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class MainForm extends Application {
 
+	public static Logger LOGGER;
 	private static MainForm instance;
 	//private JFrame frameMain;
 	//private JTabbedPane desktop;
 
 	public MainForm() {
 		instance = this;
+		this.LOGGER = Logger.getLogger("PackBuilder");
+		this.LOGGER.setParent(MCUpdater.apiLogger);
+		this.LOGGER.setUseParentHandlers(true);
+		this.LOGGER.setLevel(Level.ALL);
 	}
 
 	@Override

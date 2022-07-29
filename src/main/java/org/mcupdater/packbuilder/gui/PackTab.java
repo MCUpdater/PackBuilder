@@ -281,7 +281,7 @@ public class PackTab extends Tab {
 						tmp.deleteOnExit();
 						path = tmp.toPath();
 						if( Files.size(path) == 0 ) {
-							System.out.println("!! got zero bytes from " + stringUrl);
+							MainForm.LOGGER.severe("!! got zero bytes from " + stringUrl);
 							return;
 						}
 						Module newModule = (Module) PathWalker.handleOneFile(new ServerDefinition(), tmp, stringUrl);
@@ -289,7 +289,7 @@ public class PackTab extends Tab {
 						server.getChildren().add(new TreeItem<>(newModule));
 						server.setExpanded(true);
 					} catch (IOException e) {
-						System.out.println("!! Unable to download " + stringUrl);
+						MainForm.LOGGER.severe("!! Unable to download " + stringUrl);
 						return;
 					}
 				});
@@ -554,7 +554,7 @@ public class PackTab extends Tab {
 					((Module) parent.getValue()).getConfigs().remove(selectedItem.getValue());
 					break;
 				default:
-					System.out.println(selectedItem.getValue().getClass().toString());
+					MainForm.LOGGER.warning(selectedItem.getValue().getClass().toString());
 			}
 			tree.getSelectionModel().select(parent);
 			parent.getChildren().remove(selectedItem);
@@ -667,7 +667,7 @@ public class PackTab extends Tab {
 						configGroup.setVisible(true);
 						break;
 					default:
-						System.out.println(treeItem.getValue().getClass().toString());
+						MainForm.LOGGER.warning(treeItem.getValue().getClass().toString());
 						serverGroup.setVisible(false);
 						importGroup.setVisible(false);
 						moduleGroup.setVisible(false);

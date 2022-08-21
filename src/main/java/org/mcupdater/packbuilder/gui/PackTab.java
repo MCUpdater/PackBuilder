@@ -276,9 +276,7 @@ public class PackTab extends Tab {
 					final File tmp;
 					final Path path;
 					try {
-						tmp = File.createTempFile("import", ".jar");
-						DownloadUtil.get(new URL(stringUrl), tmp);
-						tmp.deleteOnExit();
+						tmp = DownloadUtil.getToTemp(new URL(stringUrl), "import", ".jar");
 						path = tmp.toPath();
 						if( Files.size(path) == 0 ) {
 							MainForm.LOGGER.severe("!! got zero bytes from " + stringUrl);

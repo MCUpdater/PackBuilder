@@ -273,19 +273,22 @@ public class PackTab extends Tab {
 							server = null;
 					}
 					//TODO: Download and process
-					final File tmp;
-					final Path path;
+					File tmp;
+					Path path;
 					try {
-						tmp = DownloadUtil.getToTemp(new URL(stringUrl), "import", ".jar");
-						path = tmp.toPath();
-						if( Files.size(path) == 0 ) {
-							MainForm.LOGGER.severe("!! got zero bytes from " + stringUrl);
-							return;
+						List<String> urls = List.of(stringUrl.split("\\|"));
+						for (String entry : urls) {
+							tmp = DownloadUtil.getToTemp(new URL(entry), "import", ".jar");
+							path = tmp.toPath();
+							if (Files.size(path) == 0) {
+								MainForm.LOGGER.severe("!! got zero bytes from " + stringUrl);
+								return;
+							}
+							Module newModule = (Module) PathWalker.handleOneFile(new ServerDefinition(), tmp, entry);
+							((RawServer) server.getValue()).getPackElements().add(newModule);
+							server.getChildren().add(new TreeItem<>(newModule));
+							server.setExpanded(true);
 						}
-						Module newModule = (Module) PathWalker.handleOneFile(new ServerDefinition(), tmp, stringUrl);
-						((RawServer) server.getValue()).getPackElements().add(newModule);
-						server.getChildren().add(new TreeItem<>(newModule));
-						server.setExpanded(true);
 					} catch (IOException e) {
 						MainForm.LOGGER.severe("!! Unable to download " + stringUrl);
 						return;

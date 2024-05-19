@@ -524,6 +524,7 @@ public class PackTab extends Tab {
 				alert.showAndWait();
 			}
 			RawServer newServer = new RawServer(fastpack.getServerEntry());
+			newServer.getPackElements().addAll(fastpack.getLoaders());
 			newServer.getPackElements().addAll(fastpack.getImports());
 			newServer.getPackElements().addAll(fastpack.sortMods());
 			return newServer;

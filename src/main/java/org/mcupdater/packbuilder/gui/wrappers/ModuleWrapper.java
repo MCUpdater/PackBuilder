@@ -47,6 +47,7 @@ public class ModuleWrapper extends ModifiableElement {
 	private CheckBox fieldIsDefault = new CheckBox();
 	private ChoiceBox<ModType> fieldModType = new ChoiceBox<>(FXCollections.observableArrayList(ModType.values()));
 	private CheckBox fieldInRoot = new CheckBox();
+	private CheckBox fieldCurseJar = new CheckBox();
 	private TextField fieldOrder = new TextField();
 	private CheckBox fieldKeepMeta = new CheckBox();
 	private TextField fieldLaunchArgs = new TextField();
@@ -90,10 +91,12 @@ public class ModuleWrapper extends ModifiableElement {
 		gui.addRow(row++, new Label("Curse"), new Separator(Orientation.HORIZONTAL));
 		gui.addRow(row++, new Label("   Project ID:"), fieldCurseProject);
 		gui.addRow(row++, new Label("   File:"), fieldCurseFile);
+/* Disabled as support is broken
 		gui.addRow(row++, new Label("   Release Type:"), fieldCurseType);
 		gui.addRow(row++, new Label("   AutoUpgrade:"), fieldCurseAuto);
 		Button btnUpdate = new Button("Update to newest release");
 		gui.addRow(row++, new Label(""), btnUpdate);
+ */
 		gui.addRow(row++, new Pane(), new Separator(Orientation.HORIZONTAL));
 		gui.addRow(row++, new Label("Load Order Prefix:", loadResource("stop.png")), fieldPrefix);
 		gui.addRow(row++, new Label("Mod Path:"), fieldModPath);
@@ -102,6 +105,7 @@ public class ModuleWrapper extends ModifiableElement {
 		gui.addRow(row++, new Label("   Default:"), fieldIsDefault);
 		gui.addRow(row++, new Label("Mod Type:"), fieldModType);
 		gui.addRow(row++, new Label("   (Extract) In Root:"), fieldInRoot);
+		gui.addRow(row++, new Label("   (Extract) Curse Jar:"), fieldCurseJar);
 		gui.addRow(row++, new Label("   Order:"), fieldOrder);
 		gui.addRow(row++, new Label("   (Jar) Keep META-INF:"), fieldKeepMeta);
 		gui.addRow(row++, new Label("   Special Launch Args:", loadResource("stop.png")), fieldLaunchArgs);
@@ -157,10 +161,12 @@ public class ModuleWrapper extends ModifiableElement {
 			fieldMD5.setText(parsed.getMD5());
 		});
 		gui.addRow(row++, btnReparse);
+/* Disabled - Support broken
 		btnUpdate.setOnAction(event -> {
 			fieldCurseFile.setText("");
 			btnReparse.fire();
 		});
+ */
 
 		for (Node child : gui.getChildren()) {
 			if (!(child instanceof Label)){
@@ -254,6 +260,7 @@ public class ModuleWrapper extends ModifiableElement {
 		element.setIsDefault(fieldIsDefault.isSelected());
 		element.setModType(fieldModType.getValue());
 		element.setInRoot(fieldInRoot.isSelected());
+		element.setCurseJar(fieldCurseJar.isSelected());
 		element.setJarOrder(Integer.parseInt(fieldOrder.getText()));
 		element.setKeepMeta(fieldKeepMeta.isSelected());
 		element.setLaunchArgs(fieldLaunchArgs.getText());
@@ -301,6 +308,7 @@ public class ModuleWrapper extends ModifiableElement {
 		fieldIsDefault.setSelected(element.getIsDefault());
 		fieldModType.setValue(element.getModType());
 		fieldInRoot.setSelected(element.getInRoot());
+		fieldCurseJar.setSelected(element.getCurseJar());
 		fieldOrder.setText(String.valueOf(element.getJarOrder()));
 		fieldKeepMeta.setSelected(element.getKeepMeta());
 		fieldLaunchArgs.setText(element.getLaunchArgs());

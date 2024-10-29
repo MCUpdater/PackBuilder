@@ -384,7 +384,47 @@ public class PackTab extends Tab {
 			});
 			Button tbLinkSubmod = new Button("", loadResource("plugin_link.png"));
 			tbLinkSubmod.setOnAction(event -> {
-				//TODO: Download Link
+				TextInputDialog curseImport = new TextInputDialog();
+				curseImport.setTitle("Add from URL");
+				curseImport.setHeaderText("Enter URL to add");
+				curseImport.setContentText("URL:");
+
+				Optional<String> result = curseImport.showAndWait();
+				result.ifPresent(stringUrl -> {
+					TreeItem<IPackElement> currentItem = tree.getSelectionModel().getSelectedItem();
+					TreeItem<IPackElement> module;
+					switch (currentItem.getValue().getClass().toString()) {
+						case "class org.mcupdater.model.Module":
+							module = currentItem;
+							break;
+						case "class org.mcupdater.model.Submodule":
+						case "class org.mcupdater.model.ConfigFile":
+							module = currentItem.getParent();
+							break;
+						default:
+							module = null;
+					}
+					//TODO: Download and process
+					File tmp;
+					Path path;
+					try {
+						List<String> urls = List.of(stringUrl.split("\\|"));
+						for (String entry : urls) {
+							tmp = DownloadUtil.getToTemp(new URL(entry), "import", ".jar");
+							path = tmp.toPath();
+							if (Files.size(path) == 0) {
+								MainForm.LOGGER.severe("!! got zero bytes from " + stringUrl);
+								return;
+							}
+							Submodule newModule = (Submodule) PathWalker.handleOneFile(new ServerDefinition(), tmp, entry);
+							((Module) module.getValue()).getSubmodules().add(newModule);
+							module.setExpanded(true);
+						}
+					} catch (IOException e) {
+						MainForm.LOGGER.severe("!! Unable to download " + stringUrl);
+						return;
+					}
+				});
 			});
 			submoduleGroup = new HBox(tbSubmod, tbNewSubmod,tbCurseSubmod,tbLinkSubmod);
 

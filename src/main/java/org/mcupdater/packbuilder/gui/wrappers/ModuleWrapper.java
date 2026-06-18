@@ -12,21 +12,12 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import org.mcupdater.downloadlib.Downloadable;
-import org.mcupdater.model.*;
-import org.mcupdater.model.Module;
+import org.mcupdater.model.v2.*;
+import org.mcupdater.model.v2.Module;
 import org.mcupdater.packbuilder.gui.ModifiableElement;
-import org.mcupdater.util.CurseModCache;
-import org.mcupdater.util.MCUpdater;
-import org.mcupdater.util.PathWalker;
-import org.mcupdater.util.ServerDefinition;
 
-import java.io.File;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.*;
 
 public class ModuleWrapper extends ModifiableElement {

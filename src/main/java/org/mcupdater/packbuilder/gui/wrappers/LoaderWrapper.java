@@ -4,7 +4,7 @@ import javafx.collections.FXCollections;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
-import org.mcupdater.model.Loader;
+import org.mcupdater.model.v2.Loader;
 import org.mcupdater.packbuilder.gui.ModifiableElement;
 
 import java.text.DecimalFormat;

@@ -5,7 +5,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
-import org.mcupdater.model.RawServer;
+import org.mcupdater.model.v2.RawServer;
 import org.mcupdater.packbuilder.gui.ModifiableElement;
 
 public class ServerWrapper extends ModifiableElement {

@@ -2,8 +2,8 @@ package org.mcupdater.packbuilder.gui;
 
 import javafx.scene.control.TreeItem;
 import org.mcupdater.api.Version;
-import org.mcupdater.model.*;
-import org.mcupdater.model.Module;
+import org.mcupdater.model.v2.*;
+import org.mcupdater.model.v2.Module;
 import org.mcupdater.util.ServerPackParser;
 
 public class TreeBuilder {

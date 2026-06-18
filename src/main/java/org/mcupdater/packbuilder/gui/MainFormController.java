@@ -6,8 +6,8 @@ import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
 import org.mcupdater.api.Version;
-import org.mcupdater.model.*;
-import org.mcupdater.model.Module;
+import org.mcupdater.model.v2.*;
+import org.mcupdater.model.v2.Module;
 import org.mcupdater.util.FastPack;
 import org.mcupdater.util.ServerDefinition;
 import org.mcupdater.util.ServerPackParser;
@@ -49,6 +49,10 @@ public class MainFormController {
 	@FXML public Button btnB;
 	@FXML public Button btnC;
 	@FXML public Button btnD;
+
+	public void initialize() {
+		tabContent.setTabDragPolicy(TabPane.TabDragPolicy.REORDER);
+	}
 
 	@FXML
 	public void createTab(ActionEvent actionEvent) {

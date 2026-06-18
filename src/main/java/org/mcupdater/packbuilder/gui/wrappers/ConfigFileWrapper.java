@@ -10,8 +10,8 @@ import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import org.mcupdater.model.ConfigFile;
-import org.mcupdater.model.PrioritizedURL;
+import org.mcupdater.model.v2.ConfigFile;
+import org.mcupdater.model.v2.PrioritizedURL;
 import org.mcupdater.packbuilder.gui.ModifiableElement;
 
 import java.net.MalformedURLException;

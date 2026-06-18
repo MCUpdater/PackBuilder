@@ -17,8 +17,8 @@ import javafx.scene.layout.*;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Window;
 import org.mcupdater.downloadlib.DownloadUtil;
-import org.mcupdater.model.*;
-import org.mcupdater.model.Module;
+import org.mcupdater.model.v2.*;
+import org.mcupdater.model.v2.Module;
 import org.mcupdater.mojang.VersionManifest;
 import org.mcupdater.packbuilder.gui.wrappers.*;
 import org.mcupdater.util.FastPack;
@@ -95,16 +95,16 @@ public class PackTab extends Tab {
 				TreeItem<IPackElement> currentItem = tree.getSelectionModel().getSelectedItem();
 				TreeItem<IPackElement> server;
 				switch (currentItem.getValue().getClass().toString()) {
-					case "class org.mcupdater.model.RawServer":
+					case "class org.mcupdater.model.v2.RawServer":
 						server = currentItem;
 						break;
-					case "class org.mcupdater.model.Import":
-					case "class org.mcupdater.model.Loader":
-					case "class org.mcupdater.model.Module":
+					case "class org.mcupdater.model.v2.Import":
+					case "class org.mcupdater.model.v2.Loader":
+					case "class org.mcupdater.model.v2.Module":
 						server = currentItem.getParent();
 						break;
-					case "class org.mcupdater.model.Submodule":
-					case "class org.mcupdater.model.ConfigFile":
+					case "class org.mcupdater.model.v2.Submodule":
+					case "class org.mcupdater.model.v2.ConfigFile":
 						server = currentItem.getParent().getParent();
 						break;
 					default:
@@ -120,16 +120,16 @@ public class PackTab extends Tab {
 				TreeItem<IPackElement> currentItem = tree.getSelectionModel().getSelectedItem();
 				TreeItem<IPackElement> server;
 				switch (currentItem.getValue().getClass().toString()) {
-					case "class org.mcupdater.model.RawServer":
+					case "class org.mcupdater.model.v2.RawServer":
 						server = currentItem;
 						break;
-					case "class org.mcupdater.model.Import":
-					case "class org.mcupdater.model.Loader":
-					case "class org.mcupdater.model.Module":
+					case "class org.mcupdater.model.v2.Import":
+					case "class org.mcupdater.model.v2.Loader":
+					case "class org.mcupdater.model.v2.Module":
 						server = currentItem.getParent();
 						break;
-					case "class org.mcupdater.model.Submodule":
-					case "class org.mcupdater.model.ConfigFile":
+					case "class org.mcupdater.model.v2.Submodule":
+					case "class org.mcupdater.model.v2.ConfigFile":
 						server = currentItem.getParent().getParent();
 						break;
 					default:
@@ -160,16 +160,16 @@ public class PackTab extends Tab {
 				TreeItem<IPackElement> currentItem = tree.getSelectionModel().getSelectedItem();
 				TreeItem<IPackElement> server;
 				switch (currentItem.getValue().getClass().toString()) {
-					case "class org.mcupdater.model.RawServer":
+					case "class org.mcupdater.model.v2.RawServer":
 						server = currentItem;
 						break;
-					case "class org.mcupdater.model.Import":
-					case "class org.mcupdater.model.Loader":
-					case "class org.mcupdater.model.Module":
+					case "class org.mcupdater.model.v2.Import":
+					case "class org.mcupdater.model.v2.Loader":
+					case "class org.mcupdater.model.v2.Module":
 						server = currentItem.getParent();
 						break;
-					case "class org.mcupdater.model.Submodule":
-					case "class org.mcupdater.model.ConfigFile":
+					case "class org.mcupdater.model.v2.Submodule":
+					case "class org.mcupdater.model.v2.ConfigFile":
 						server = currentItem.getParent().getParent();
 						break;
 					default:
@@ -200,16 +200,16 @@ public class PackTab extends Tab {
 							TreeItem<IPackElement> currentItem = tree.getSelectionModel().getSelectedItem();
 							TreeItem<IPackElement> server;
 							switch (currentItem.getValue().getClass().toString()) {
-								case "class org.mcupdater.model.RawServer":
+								case "class org.mcupdater.model.v2.RawServer":
 									server = currentItem;
 									break;
-								case "class org.mcupdater.model.Import":
-								case "class org.mcupdater.model.Loader":
-								case "class org.mcupdater.model.Module":
+								case "class org.mcupdater.model.v2.Import":
+								case "class org.mcupdater.model.v2.Loader":
+								case "class org.mcupdater.model.v2.Module":
 									server = currentItem.getParent();
 									break;
-								case "class org.mcupdater.model.Submodule":
-								case "class org.mcupdater.model.ConfigFile":
+								case "class org.mcupdater.model.v2.Submodule":
+								case "class org.mcupdater.model.v2.ConfigFile":
 									server = currentItem.getParent().getParent();
 									break;
 								default:
@@ -257,16 +257,16 @@ public class PackTab extends Tab {
 					TreeItem<IPackElement> currentItem = tree.getSelectionModel().getSelectedItem();
 					TreeItem<IPackElement> server;
 					switch (currentItem.getValue().getClass().toString()) {
-						case "class org.mcupdater.model.RawServer":
+						case "class org.mcupdater.model.v2.RawServer":
 							server = currentItem;
 							break;
-						case "class org.mcupdater.model.Import":
-						case "class org.mcupdater.model.Loader":
-						case "class org.mcupdater.model.Module":
+						case "class org.mcupdater.model.v2.Import":
+						case "class org.mcupdater.model.v2.Loader":
+						case "class org.mcupdater.model.v2.Module":
 							server = currentItem.getParent();
 							break;
-						case "class org.mcupdater.model.Submodule":
-						case "class org.mcupdater.model.ConfigFile":
+						case "class org.mcupdater.model.v2.Submodule":
+						case "class org.mcupdater.model.v2.ConfigFile":
 							server = currentItem.getParent().getParent();
 							break;
 						default:
@@ -304,11 +304,11 @@ public class PackTab extends Tab {
 				TreeItem<IPackElement> currentItem = tree.getSelectionModel().getSelectedItem();
 				TreeItem<IPackElement> module;
 				switch (currentItem.getValue().getClass().toString()) {
-					case "class org.mcupdater.model.Module":
+					case "class org.mcupdater.model.v2.Module":
 						module = currentItem;
 						break;
-					case "class org.mcupdater.model.Submodule":
-					case "class org.mcupdater.model.ConfigFile":
+					case "class org.mcupdater.model.v2.Submodule":
+					case "class org.mcupdater.model.v2.ConfigFile":
 						module = currentItem.getParent();
 						break;
 					default:
@@ -339,12 +339,12 @@ public class PackTab extends Tab {
 							TreeItem<IPackElement> module;
 							TreeItem<IPackElement> server;
 							switch (currentItem.getValue().getClass().toString()) {
-								case "class org.mcupdater.model.Module":
+								case "class org.mcupdater.model.v2.Module":
 									module = currentItem;
 									server = currentItem.getParent();
 									break;
-								case "class org.mcupdater.model.Submodule":
-								case "class org.mcupdater.model.ConfigFile":
+								case "class org.mcupdater.model.v2.Submodule":
+								case "class org.mcupdater.model.v2.ConfigFile":
 									module = currentItem.getParent();
 									server = currentItem.getParent().getParent();
 									break;
@@ -394,11 +394,11 @@ public class PackTab extends Tab {
 					TreeItem<IPackElement> currentItem = tree.getSelectionModel().getSelectedItem();
 					TreeItem<IPackElement> module;
 					switch (currentItem.getValue().getClass().toString()) {
-						case "class org.mcupdater.model.Module":
+						case "class org.mcupdater.model.v2.Module":
 							module = currentItem;
 							break;
-						case "class org.mcupdater.model.Submodule":
-						case "class org.mcupdater.model.ConfigFile":
+						case "class org.mcupdater.model.v2.Submodule":
+						case "class org.mcupdater.model.v2.ConfigFile":
 							module = currentItem.getParent();
 							break;
 						default:
@@ -435,11 +435,11 @@ public class PackTab extends Tab {
 				TreeItem<IPackElement> currentItem = tree.getSelectionModel().getSelectedItem();
 				TreeItem<IPackElement> module;
 				switch (currentItem.getValue().getClass().toString()) {
-					case "class org.mcupdater.model.Module":
+					case "class org.mcupdater.model.v2.Module":
 						module = currentItem;
 						break;
-					case "class org.mcupdater.model.Submodule":
-					case "class org.mcupdater.model.ConfigFile":
+					case "class org.mcupdater.model.v2.Submodule":
+					case "class org.mcupdater.model.v2.ConfigFile":
 						module = currentItem.getParent();
 						break;
 					default:
@@ -582,17 +582,17 @@ public class PackTab extends Tab {
 		confirmation.showAndWait().filter(response -> response == ButtonType.OK).ifPresent(response -> {
 			TreeItem parent = selectedItem.getParent();
 			switch (selectedItem.getValue().getClass().toString()) {
-				case "class org.mcupdater.model.RawServer":
+				case "class org.mcupdater.model.v2.RawServer":
 					((ServerPack) parent.getValue()).getServers().remove(selectedItem.getValue());
 					break;
-				case "class org.mcupdater.model.Import":
-				case "class org.mcupdater.model.Module":
+				case "class org.mcupdater.model.v2.Import":
+				case "class org.mcupdater.model.v2.Module":
 					((RawServer) parent.getValue()).getPackElements().remove(selectedItem.getValue());
 					break;
-				case "class org.mcupdater.model.Submodule":
+				case "class org.mcupdater.model.v2.Submodule":
 					((Module) parent.getValue()).getSubmodules().remove(selectedItem.getValue());
 					break;
-				case "class org.mcupdater.model.ConfigFile":
+				case "class org.mcupdater.model.v2.ConfigFile":
 					((Module) parent.getValue()).getConfigs().remove(selectedItem.getValue());
 					break;
 				default:
@@ -651,7 +651,7 @@ public class PackTab extends Tab {
 				detailPanel.getChildren().clear();
 				RawServer rawServer;
 				switch (treeItem.getValue().getClass().toString()) {
-					case "class org.mcupdater.model.ServerPack":
+					case "class org.mcupdater.model.v2.ServerPack":
 						ServerPack pack = (ServerPack) treeItem.getValue();
 						current[0] = new ServerPackWrapper(pack, detailPanel);
 						serverGroup.setVisible(true);
@@ -660,7 +660,7 @@ public class PackTab extends Tab {
 						submoduleGroup.setVisible(false);
 						configGroup.setVisible(false);
 						break;
-					case "class org.mcupdater.model.RawServer":
+					case "class org.mcupdater.model.v2.RawServer":
 						RawServer server = (RawServer) treeItem.getValue();
 						current[0] = new ServerWrapper(server, detailPanel);
 						serverGroup.setVisible(true);
@@ -669,7 +669,7 @@ public class PackTab extends Tab {
 						submoduleGroup.setVisible(false);
 						configGroup.setVisible(false);
 						break;
-					case "class org.mcupdater.model.Import":
+					case "class org.mcupdater.model.v2.Import":
 						Import anImport = (Import) treeItem.getValue();
 						rawServer = (treeItem.getParent().getValue() instanceof RawServer ? (RawServer) treeItem.getParent().getValue() : (RawServer) treeItem.getParent().getParent().getValue());
 						current[0] = new ImportWrapper(anImport, detailPanel, rawServer.getVersion());
@@ -679,7 +679,7 @@ public class PackTab extends Tab {
 						submoduleGroup.setVisible(false);
 						configGroup.setVisible(false);
 						break;
-					case "class org.mcupdater.model.Loader":
+					case "class org.mcupdater.model.v2.Loader":
 						Loader anLoader = (Loader) treeItem.getValue();
 						rawServer = (treeItem.getParent().getValue() instanceof RawServer ? (RawServer) treeItem.getParent().getValue() : (RawServer) treeItem.getParent().getParent().getValue());
 						current[0] = new LoaderWrapper(anLoader, detailPanel, rawServer.getVersion());
@@ -689,8 +689,8 @@ public class PackTab extends Tab {
 						submoduleGroup.setVisible(false);
 						configGroup.setVisible(false);
 						break;
-					case "class org.mcupdater.model.Module":
-					case "class org.mcupdater.model.Submodule":
+					case "class org.mcupdater.model.v2.Module":
+					case "class org.mcupdater.model.v2.Submodule":
 						GenericModule module = (GenericModule) treeItem.getValue();
 						rawServer = (treeItem.getParent().getValue() instanceof RawServer ? (RawServer) treeItem.getParent().getValue() : (RawServer) treeItem.getParent().getParent().getValue());
 						current[0] = new ModuleWrapper(module, detailPanel, rawServer.getVersion());
@@ -700,7 +700,7 @@ public class PackTab extends Tab {
 						submoduleGroup.setVisible(true);
 						configGroup.setVisible(true);
 						break;
-					case "class org.mcupdater.model.ConfigFile":
+					case "class org.mcupdater.model.v2.ConfigFile":
 						ConfigFile config = (ConfigFile) treeItem.getValue();
 						current[0] = new ConfigFileWrapper(config, detailPanel);
 						importGroup.setVisible(true);
